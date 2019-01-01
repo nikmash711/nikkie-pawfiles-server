@@ -1,8 +1,13 @@
 'use strict';
 
 const express = require('express');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const {CLIENT_ORIGIN} = require('./config');
+
+const pawfilesRouter = require('./routes/pawfiles');
+
+const {CLIENT_ORIGIN, PORT, MONGODB_URI } = require('./config');
 
 const app = express();
 
@@ -12,99 +17,39 @@ app.use(
   })
 );
 
-let pawfiles =[
-  {
-    id: 0,
-    name: 'Mushy',
-    species: 'Cat',
-    gender: 'Female',
-    breed: 'Domestic Mix',
-    weight: '8 lbs',
-    birthday: '2016-10-26',
-    bio: 'Meow. I\'m a cute troublemaker. I\'ll purr then hiss. Give me scritches?',
-    img: 'https://i.ibb.co/y8hFnkL/2.jpg',
-    reminders: [
-      {
-        id: 0,
-        note: 'Trim Nails',
-        date: '2016-10-26',
-      },
-      {
-        id: 1,
-        note: 'Vet Appointment',
-        date: '2016-11-26',
-      },
-    ],
-    posts: [
-      {
-        id: 0,
-        type: 'memory',
-        title: 'Mushy learns how to open the door',
-        date: 'Fri Dec 14 2018',
-        description: 'I walked into the living room and saw her opening it with her claws. How dare she!',
-        memory_img: 'https://i.ibb.co/YXHrzCq/Screen-Shot-2018-12-31-at-8-30-37-AM.png" alt="Screen-Shot-2018-12-31-at-8-30-37-AM'
-      },
-      {
-        id: 1,
-        type: 'medical',
-        title: 'Shes throwing up again:(',
-        date: 'Fri Dec 14 2017',
-        symptoms: ['lethargic', 'no appetite'],
-        vaccinations:['rabies'],
-        prescriptions:['Frontline flea'],
-        doctor: 'Dr. Moon',
-        notes: 'Gave her fluids for the day. Wont let her eat until tomorrow. Try laxatives.',
-      }
-    ],
-    vaccinations: [
-      {
-        name: 'Rabies',
-        date: '2018-10-12'
-      }
-    ],
-    prescriptions:[]
-  },
-  {
-    id: 1,
-    name: 'Muffin',
-    species: 'Dog',
-    gender: 'Male',
-    breed: 'Pom/Yorkie Mix',
-    birthday: '2010-01-10',
-    bio: 'Ruff. I want to always play and go on walks. Did you say snack?',
-    img: 'https://i.ibb.co/stMyFMp/IMG-6267.png',
-    reminders: [
-      {
-        id: 0,
-        note: 'Give Shot',
-        date: 'Daily'
-      },
-    ]
-  }, 
-];
+// Log all requests, skip during tests
+app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common', {
+  skip: () => process.env.NODE_ENV === 'test'
+}));
 
-app.get('/api/pawfiles', (req, res) => {
-  res.json({
-    pawfiles: pawfiles
-  });
-});
+// Parse request body
+app.use(express.json());
 
-app.get('/api/:pawfileId', (req, res, next) => {
+app.use('/api/pawfiles', pawfilesRouter);
+
+// app.get('/api/:pawfileId', (req, res, next) => {
   
-  let pawfile = pawfiles.find(pawfile=>req.params.pawfileId==pawfile.id);
+//   let pawfile = pawfiles.find(pawfile=>req.params.pawfileId==pawfile.id);
 
-  console.log('in server, pawfile is', pawfile);
-  if(pawfile){
-    console.log('sending back response');
-    res.json({
-      pawfile: pawfile
-    });
-  }
-  else{
-    console.log('jumping to error');
-    next();
-  }
+//   console.log('in server, pawfile is', pawfile);
+//   if(pawfile){
+//     console.log('sending back response');
+//     res.json({
+//       pawfile: pawfile
+//     });
+//   }
+//   else{
+//     console.log('jumping to error');
+//     next();
+//   }
 
+// });
+
+// Custom 404 Not Found route handler
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
 // Custom Error Handler
@@ -118,4 +63,20 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.listen(8080);
+if (require.main === module) {
+  //  // Connect to DB and Listen for incoming connections
+  mongoose.connect(MONGODB_URI, { useNewUrlParser:true }) //Mongo will automatically create the db here if it doesnt exist, and then mongoose will automatically create any collections that dont already exist by going through your models
+    .catch(err => {
+      console.error(`ERROR: ${err.message}`);
+      console.error('\n === Did you remember to start `mongod`? === \n');
+      console.error(err);
+    });
+
+  app.listen(PORT, function () {
+    console.info(`Server listening on ${this.address().port}`);
+  }).on('error', err => {
+    console.error(err);
+  });
+}
+
+module.exports = app; // Export for testing
