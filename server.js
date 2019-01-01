@@ -27,23 +27,6 @@ app.use(express.json());
 
 app.use('/api/pawfiles', pawfilesRouter);
 
-// app.get('/api/:pawfileId', (req, res, next) => {
-  
-//   let pawfile = pawfiles.find(pawfile=>req.params.pawfileId==pawfile.id);
-
-//   console.log('in server, pawfile is', pawfile);
-//   if(pawfile){
-//     console.log('sending back response');
-//     res.json({
-//       pawfile: pawfile
-//     });
-//   }
-//   else{
-//     console.log('jumping to error');
-//     next();
-//   }
-
-// });
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {

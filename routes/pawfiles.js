@@ -21,4 +21,23 @@ router.get('/', (req, res, next) => {
     });
 });
 
+router.get('/:pawfileId', (req, res, next) => {
+  const {pawfileId} = req.params;
+
+  Pawfile.findOne({_id: pawfileId})
+    .populate('reminders')
+    .populate('posts')
+    .then(pawfile => {
+      if(pawfile){
+        res.json(pawfile);
+      }
+      else{
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
 module.exports = router;
