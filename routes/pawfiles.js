@@ -11,8 +11,6 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
   Pawfile.find()
-    .populate('reminders')
-    .populate('posts')
     .then(pawfiles => {
       res.json(pawfiles);
     })
@@ -39,5 +37,19 @@ router.get('/:pawfileId', (req, res, next) => {
       next(err);
     });
 });
+
+/* ========== POST/CREATE AN ITEM ========== */
+router.post('/', (req, res, next) => {
+  const newPawfile = req.body;
+  console.log('the new pawfile is', newPawfile);
+  Pawfile.create(newPawfile)
+    .then(pawfile => {
+      res.location(`http://${req.headers.host}/api/pawfiles/${pawfile.id}`).status(201).json(pawfile);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
 
 module.exports = router;
