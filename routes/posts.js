@@ -9,7 +9,7 @@ const Post = require('../models/post');
 
 const router = express.Router();
 
-/* ========== POST/CREATE A POST ========== */
+/* ========== CEATE A POST ========== */
 router.post('/:pawfileId', (req, res, next) => {
   console.log('in post request');
   const newPost = req.body;
@@ -29,7 +29,7 @@ router.post('/:pawfileId', (req, res, next) => {
     });
 });
 
-/* PUT */
+/* ========== UPDATE A POST ========== */
 router.put('/:pawfileId/:postId', (req, res, next) => {
   const{ pawfileId, postId }= req.params;
   const updatedPost = req.body;
@@ -56,7 +56,7 @@ router.put('/:pawfileId/:postId', (req, res, next) => {
     });
 });
 
-/* DELETE Post */
+/* ========== DELETE A POST ========== */
 router.delete('/:pawfileId/:postId', (req, res, next) => {
   const { pawfileId, postId } = req.params;
 

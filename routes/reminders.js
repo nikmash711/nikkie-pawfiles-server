@@ -9,7 +9,7 @@ const Post = require('../models/post');
 
 const router = express.Router();
 
-/* ========== POST/CREATE A REMINDER ========== */
+/* ========== CREATE A REMINDER ========== */
 router.post('/:pawfileId', (req, res, next) => {
   const newReminder = req.body;
   const {pawfileId} = req.params;
@@ -28,7 +28,35 @@ router.post('/:pawfileId', (req, res, next) => {
     });
 });
 
-/* DELETE REMINDER */
+
+/* ========== UPDATE A REMINDER ========== */
+router.put('/:pawfileId/:reminderId', (req, res, next) => {
+  const{ pawfileId, reminderId }= req.params;
+  const updatedReminder = req.body;
+  
+  Reminder.findOneAndUpdate({_id: reminderId}, updatedReminder, {new: true})
+    .then(reminder=>{
+      //now that reminder has been updated, resend the updated Pawfile
+      return Pawfile.findById (pawfileId)
+        .populate('reminders')
+        .populate('posts');
+    })
+    .then(pawfile => {
+      if(pawfile){
+        console.log('pawfile being sent back is', pawfile);
+        res.status(200).json(pawfile);
+      }
+      else{
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+
+/* ========== DELETE A REMINDER ========== */
 router.delete('/:pawfileId/:reminderId', (req, res, next) => {
   const { pawfileId, reminderId } = req.params;
 
