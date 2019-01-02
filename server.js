@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const pawfilesRouter = require('./routes/pawfiles');
+const remindersRouter = require('./routes/reminders');
 
 const {CLIENT_ORIGIN, PORT, MONGODB_URI } = require('./config');
 
@@ -26,7 +27,7 @@ app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common', {
 app.use(express.json());
 
 app.use('/api/pawfiles', pawfilesRouter);
-
+app.use('/api/reminders', remindersRouter);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {

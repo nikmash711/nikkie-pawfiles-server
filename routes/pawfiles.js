@@ -9,6 +9,7 @@ const Post = require('../models/post');
 
 const router = express.Router();
 
+/* GET ALL PAWFILES */
 router.get('/', (req, res, next) => {
   Pawfile.find()
     .populate('reminders')
