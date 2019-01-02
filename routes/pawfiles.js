@@ -11,6 +11,8 @@ const router = express.Router();
 
 router.get('/', (req, res, next) => {
   Pawfile.find()
+    .populate('reminders')
+    .populate('posts')
     .then(pawfiles => {
       res.json(pawfiles);
     })
@@ -57,8 +59,11 @@ router.put('/:pawfileId', (req, res, next) => {
   const updatedPawfile = req.body;
   
   Pawfile.findOneAndUpdate({_id: pawfileId}, updatedPawfile, {new: true})
+    .populate('reminders')
+    .populate('posts')
     .then(pawfile => {
       if(pawfile){
+        console.log('pawfile being sent back is', pawfile);
         res.status(200).json(pawfile);
       }
       else{
