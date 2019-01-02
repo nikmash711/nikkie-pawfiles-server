@@ -7,6 +7,7 @@ const cors = require('cors');
 
 const pawfilesRouter = require('./routes/pawfiles');
 const remindersRouter = require('./routes/reminders');
+const postsRouter = require('./routes/posts');
 
 const {CLIENT_ORIGIN, PORT, MONGODB_URI } = require('./config');
 
@@ -28,6 +29,7 @@ app.use(express.json());
 
 app.use('/api/pawfiles', pawfilesRouter);
 app.use('/api/reminders', remindersRouter);
+app.use('/api/posts', postsRouter);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
