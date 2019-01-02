@@ -15,7 +15,6 @@ router.post('/:pawfileId', (req, res, next) => {
   const newPost = req.body;
   // const vaccinations = newPost.vaccinations;
   const {pawfileId} = req.params;
-  console.log('the new post is', newPost);
   Post.create(newPost)
     .then(post => {
       return Pawfile.findByIdAndUpdate(pawfileId, {$push: {posts: post.id}}, {new: true})
@@ -24,6 +23,33 @@ router.post('/:pawfileId', (req, res, next) => {
     })
     .then(pawfile=>{
       return res.json(pawfile);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+/* PUT */
+router.put('/:pawfileId/:postId', (req, res, next) => {
+  const{ pawfileId, postId }= req.params;
+  const updatedPost = req.body;
+  
+  Post.findOneAndUpdate({_id: postId}, updatedPost, {new: true})
+    .then(post=>{
+      //Goal is to return an updated Pawfile with the updated post
+      //the below line doesn't update a post in the pawfile, but replaces all posts with that post
+      return Pawfile.findById (pawfileId)
+        .populate('reminders')
+        .populate('posts');
+    })
+    .then(pawfile => {
+      if(pawfile){
+        console.log('pawfile being sent back is', pawfile);
+        res.status(200).json(pawfile);
+      }
+      else{
+        next();
+      }
     })
     .catch(err => {
       next(err);
