@@ -75,4 +75,24 @@ router.put('/:pawfileId', (req, res, next) => {
     });
 });
 
+/* ========== DELETE/REMOVE A SINGLE ITEM ========== */
+router.delete('/:pawfileId', (req, res, next) => {
+  const { pawfileId } = req.params;
+
+  Pawfile.findOneAndDelete({_id:pawfileId})
+    .then((pawfile) => {
+      if(!pawfile){
+        // if trying to delete something that no longer exists or never did
+        return next();
+      }
+      else{
+        res.sendStatus(204);
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+
 module.exports = router;
