@@ -13,6 +13,7 @@ const router = express.Router();
 router.post('/:pawfileId', (req, res, next) => {
   console.log('in post request');
   const newPost = req.body;
+  // const vaccinations = newPost.vaccinations;
   const {pawfileId} = req.params;
   console.log('the new post is', newPost);
   Post.create(newPost)
@@ -34,7 +35,7 @@ router.delete('/:pawfileId/:postId', (req, res, next) => {
   const { pawfileId, postId } = req.params;
 
   //remove the post
-  const postRemovePromise = Post.findOneAndDelete({_id:postId});
+  const postRemovePromise = Post.findOneAndDelete({_id: postId});
 
   // Don't delete the pawfile associated with the post to be deleted, but just remove the post from the posts array
   const pawfilePostPullPromise = Pawfile.findByIdAndUpdate(pawfileId,
