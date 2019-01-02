@@ -38,7 +38,7 @@ router.get('/:pawfileId', (req, res, next) => {
     });
 });
 
-/* ========== POST/CREATE AN ITEM ========== */
+/* ========== POST/CREATE A PAWFILE ========== */
 router.post('/', (req, res, next) => {
   const newPawfile = req.body;
   console.log('the new pawfile is', newPawfile);
@@ -51,5 +51,23 @@ router.post('/', (req, res, next) => {
     });
 });
 
+/* ========== PUT/UPDATE A SINGLE PAWFILE ========== */
+router.put('/:pawfileId', (req, res, next) => {
+  const{ pawfileId }= req.params;
+  const updatedPawfile = req.body;
+  
+  Pawfile.findOneAndUpdate({_id: pawfileId}, updatedPawfile, {new: true})
+    .then(pawfile => {
+      if(pawfile){
+        res.status(200).json(pawfile);
+      }
+      else{
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+});
 
 module.exports = router;
