@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const reminderSchema = new mongoose.Schema({
   note: { type: String, required: true },
   date: { type: String, required: true },
+  time: { type: String, }
 });
 
 //// Customize output for `res.json(data)`, `console.log(data)` etc.
