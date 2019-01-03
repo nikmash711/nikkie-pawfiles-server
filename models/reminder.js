@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const reminderSchema = new mongoose.Schema({
   note: { type: String, required: true },
-  date: { type: String, required: true },
+  date: { type: String },
   time: { type: String, }
 });
 

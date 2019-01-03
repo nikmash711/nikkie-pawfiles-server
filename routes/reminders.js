@@ -48,7 +48,7 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
     })
     .then(() => {
       if(reminderResponse){
-        return res.json(reminderResponse);
+        return res.status(200).json(reminderResponse);
       }
       else{
         next();
