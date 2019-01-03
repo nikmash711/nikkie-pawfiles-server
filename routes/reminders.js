@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 
 const Pawfile = require('../models/pawfile');
 const Reminder = require('../models/reminder');
-const Post = require('../models/post');
 
 const router = express.Router();
 
@@ -16,6 +15,7 @@ router.post('/:pawfileId', (req, res, next) => {
   console.log('the new reminder is', newReminder);
   ///trying to update the pawfile and just send back the reminder so im not sending back everything
   let reminderResponse;
+  
   Reminder.create(newReminder)
     .then(reminder => {
       reminderResponse=reminder;
@@ -48,7 +48,7 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
     })
     .then(() => {
       if(reminderResponse){
-        return res.location(`http://${req.headers.host}/api/reminders/${reminderResponse.id}`).status(201).json(reminderResponse);
+        return res.json(reminderResponse);
       }
       else{
         next();

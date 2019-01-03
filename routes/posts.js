@@ -13,16 +13,18 @@ const router = express.Router();
 router.post('/:pawfileId', (req, res, next) => {
   console.log('in post request');
   const newPost = req.body;
-  // const vaccinations = newPost.vaccinations;
   const {pawfileId} = req.params;
+  let postResponse;
+  
   Post.create(newPost)
     .then(post => {
+      postResponse = post;
       return Pawfile.findByIdAndUpdate(pawfileId, {$push: {posts: post.id}}, {new: true})
         .populate('reminders')
         .populate('posts');
     })
-    .then(pawfile=>{
-      return res.json(pawfile);
+    .then(()=>{
+      return res.location(`http://${req.headers.host}/api/posts/${postResponse.id}`).status(201).json(postResponse);
     })
     .catch(err => {
       next(err);
@@ -33,19 +35,18 @@ router.post('/:pawfileId', (req, res, next) => {
 router.put('/:pawfileId/:postId', (req, res, next) => {
   const{ pawfileId, postId }= req.params;
   const updatedPost = req.body;
+  let postResponse;
   
   Post.findOneAndUpdate({_id: postId}, updatedPost, {new: true})
     .then(post=>{
-      //Goal is to return an updated Pawfile with the updated post
-      //the below line doesn't update a post in the pawfile, but replaces all posts with that post
+      postResponse=post;
       return Pawfile.findById (pawfileId)
         .populate('reminders')
         .populate('posts');
     })
-    .then(pawfile => {
-      if(pawfile){
-        console.log('pawfile being sent back is', pawfile);
-        res.status(200).json(pawfile);
+    .then(() => {
+      if(postResponse){
+        res.status(200).json(postResponse);
       }
       else{
         next();
