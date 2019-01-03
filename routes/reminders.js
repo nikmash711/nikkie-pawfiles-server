@@ -14,14 +14,17 @@ router.post('/:pawfileId', (req, res, next) => {
   const newReminder = req.body;
   const {pawfileId} = req.params;
   console.log('the new reminder is', newReminder);
+  ///trying to update the pawfile and just send back the reminder so im not sending back everything
+  let reminderResponse;
   Reminder.create(newReminder)
     .then(reminder => {
+      reminderResponse=reminder;
       return Pawfile.findByIdAndUpdate(pawfileId, {$push: {reminders: reminder.id}}, {new: true})
         .populate('reminders')
         .populate('posts');
     })
-    .then(pawfile=>{
-      return res.json(pawfile);
+    .then(()=>{
+      return res.location(`http://${req.headers.host}/api/reminders/${reminderResponse.id}`).status(201).json(reminderResponse);
     })
     .catch(err => {
       next(err);
@@ -34,17 +37,18 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
   const{ pawfileId, reminderId }= req.params;
   const updatedReminder = req.body;
   
+  let reminderResponse;
   Reminder.findOneAndUpdate({_id: reminderId}, updatedReminder, {new: true})
     .then(reminder=>{
+      reminderResponse = reminder;
       //now that reminder has been updated, resend the updated Pawfile
       return Pawfile.findById (pawfileId)
         .populate('reminders')
         .populate('posts');
     })
-    .then(pawfile => {
-      if(pawfile){
-        console.log('pawfile being sent back is', pawfile);
-        res.status(200).json(pawfile);
+    .then(() => {
+      if(reminderResponse){
+        return res.location(`http://${req.headers.host}/api/reminders/${reminderResponse.id}`).status(201).json(reminderResponse);
       }
       else{
         next();

@@ -33,18 +33,19 @@ const reminders = [
     _id: '333333333333333333333301',
     note: 'Trim Nails',
     date: '2019-10-26',
-    time: '',
+    time: '18:00',
   },
   {
     _id: '333333333333333333333302',
     note: 'Vet Appointment',
     date: '2019-11-26',
+    time: '04:00'
   },
   {
     _id: '333333333333333333333303',
     note: 'Daily Injection',
     date: '2019-01-26',
-    time: '',
+    time: '01:00',
   },
 ];
 
