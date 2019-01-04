@@ -131,8 +131,8 @@ router.post('/', (req, res, next) => {
 
   Promise.all([
     //but what if there are no folders or tags? shouldn't it not do this? that'll resolve in the validate
-    validatePosts(newPawfile.posts, userId),
-    validateReminders(newPawfile.reminders, userId)
+    // validatePosts(newPawfile.posts, userId),
+    // validateReminders(newPawfile.reminders, userId)
   ])
     .then(()=> Pawfile.create(newPawfile))
     .then(pawfile => {
@@ -151,8 +151,8 @@ router.put('/:pawfileId', (req, res, next) => {
 
   Promise.all([
     //but what if there are no folders or tags? shouldn't it not do this? that'll resolve in the validate
-    validatePosts(updatedPawfile.posts, userId),
-    validateReminders(updatedPawfile.reminders, userId)
+    // validatePosts(updatedPawfile.posts, userId),
+    // validateReminders(updatedPawfile.reminders, userId)
   ])
     .then(()=>{
       return  Pawfile.findOneAndUpdate({_id: pawfileId, userId}, updatedPawfile, {new: true})
