@@ -70,7 +70,7 @@ router.delete('/:pawfileId/:postId', (req, res, next) => {
   const postRemovePromise = Post.findOneAndDelete({_id: postId, userId: userId});
 
   // Don't delete the pawfile associated with the post to be deleted, but just remove the post from the posts array
-  const pawfilePostPullPromise = Pawfile.findByIdAndUpdate({pawfileId, userId},
+  const pawfilePostPullPromise = Pawfile.findOneAndUpdate({pawfileId, userId},
     { $pull: { posts: postId } }
   );
 

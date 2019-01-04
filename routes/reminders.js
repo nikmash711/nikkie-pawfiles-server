@@ -69,12 +69,13 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
 router.delete('/:pawfileId/:reminderId', (req, res, next) => {
   const { pawfileId, reminderId } = req.params;
   const userId = req.user.id;
+  console.log('deleting reminder with userId', userId)
 
   //remove the reminder
   const reminderRemovePromise = Reminder.findOneAndDelete({_id:reminderId, userId});
 
   // Don't delete the pawfile associated with the reminder to be deleted, but just remove the reminder from the reminder array
-  const pawfileReminderPullPromise = Pawfile.findByIdAndUpdate({pawfileId, userId},
+  const pawfileReminderPullPromise = Pawfile.findOneAndUpdate({pawfileId, userId},
     { $pull: { reminders: reminderId } }
   );
 
