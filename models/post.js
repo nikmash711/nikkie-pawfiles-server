@@ -14,6 +14,7 @@ const postSchema = new mongoose.Schema({
   doctor: { type: String },
   office: { type: String },
   notes: { type: String },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
 //// Customize output for `res.json(data)`, `console.log(data)` etc.

@@ -12,6 +12,9 @@ const router = express.Router();
 router.post('/:pawfileId', (req, res, next) => {
   const newReminder = req.body;
   const {pawfileId} = req.params;
+  const userId = req.user.id;
+  newReminder.userId = userId;
+
   console.log('the new reminder is', newReminder);
   ///trying to update the pawfile and just send back the reminder so im not sending back everything
   let reminderResponse;
@@ -36,9 +39,11 @@ router.post('/:pawfileId', (req, res, next) => {
 router.put('/:pawfileId/:reminderId', (req, res, next) => {
   const{ pawfileId, reminderId }= req.params;
   const updatedReminder = req.body;
+  const userId = req.user.id;
+
   
   let reminderResponse;
-  Reminder.findOneAndUpdate({_id: reminderId}, updatedReminder, {new: true})
+  Reminder.findOneAndUpdate({_id: reminderId, userId}, updatedReminder, {new: true})
     .then(reminder=>{
       reminderResponse = reminder;
       //now that reminder has been updated, resend the updated Pawfile
@@ -63,12 +68,13 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
 /* ========== DELETE A REMINDER ========== */
 router.delete('/:pawfileId/:reminderId', (req, res, next) => {
   const { pawfileId, reminderId } = req.params;
+  const userId = req.user.id;
 
   //remove the reminder
-  const reminderRemovePromise = Reminder.findOneAndDelete({_id:reminderId});
+  const reminderRemovePromise = Reminder.findOneAndDelete({_id:reminderId, userId});
 
   // Don't delete the pawfile associated with the reminder to be deleted, but just remove the reminder from the reminder array
-  const pawfileReminderPullPromise = Pawfile.findByIdAndUpdate(pawfileId,
+  const pawfileReminderPullPromise = Pawfile.findByIdAndUpdate({pawfileId, userId},
     { $pull: { reminders: reminderId } }
   );
 

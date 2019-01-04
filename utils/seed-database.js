@@ -6,8 +6,9 @@ const { MONGODB_URI } = require('../config');
 const Pawfile = require('../models/pawfile');
 const Reminder = require('../models/reminder');
 const Post = require('../models/post');
+const User = require('../models/user');
 
-const { pawfiles, reminders, posts } = require('../db/seed/data');
+const { pawfiles, reminders, posts, users } = require('../db/seed/data');
 
 console.log(`Connecting to mongodb at ${MONGODB_URI}`);
 
@@ -22,10 +23,11 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser:true, useCreateIndex : true })
       Pawfile.insertMany(pawfiles),
       Reminder.insertMany(reminders),
       Post.insertMany(posts),
+      User.insertMany(users),
     ]);
   })
-  .then(([pawfiles, reminders, posts]) => {
-    console.log(`Inserted ${pawfiles.length} Pawfiles and ${reminders.length} reminders and ${posts.length} posts`);
+  .then(([pawfiles, reminders, posts, users]) => {
+    console.log(`Inserted ${pawfiles.length} Pawfiles and ${reminders.length} reminders and ${posts.length} posts and ${users.length} users`);
   })
   .then(() => {
     console.log('Disconnecting...');

@@ -3,6 +3,7 @@
 const pawfiles =[
   {
     _id: '111111111111111111111101',
+    userId: '000000000000000000000001',
     name: 'Mushy',
     species: 'Cat',
     gender: 'Female',
@@ -16,6 +17,7 @@ const pawfiles =[
   },
   {
     _id: '111111111111111111111102',
+    userId: '000000000000000000000002',
     name: 'Muffin',
     species: 'Dog',
     gender: 'Male',
@@ -34,18 +36,21 @@ const reminders = [
     note: 'Trim Nails',
     date: '2019-10-26',
     time: '18:00',
+    userId: '000000000000000000000001',
   },
   {
     _id: '333333333333333333333302',
     note: 'Vet Appointment',
     date: '2019-11-26',
-    time: '04:00'
+    time: '04:00',
+    userId: '000000000000000000000001',
   },
   {
     _id: '333333333333333333333303',
     note: 'Daily Injection',
     date: '2019-01-26',
     time: '01:00',
+    userId: '000000000000000000000002',
   },
 ];
 
@@ -56,7 +61,8 @@ const posts = [
     title: 'Mushy learns how to open the door',
     date: '2016-10-26',
     description: 'I walked into the living room and saw her opening it with her claws. How dare she!',
-    memory_img: 'https://i.ibb.co/YXHrzCq/Screen-Shot-2018-12-31-at-8-30-37-AM.png" alt="Screen-Shot-2018-12-31-at-8-30-37-AM'
+    memory_img: 'https://i.ibb.co/YXHrzCq/Screen-Shot-2018-12-31-at-8-30-37-AM.png" alt="Screen-Shot-2018-12-31-at-8-30-37-AM',
+    userId: '000000000000000000000001',
   },
   {
     _id: '222222222222222222222202',
@@ -68,6 +74,7 @@ const posts = [
     prescriptions:['Frontline flea'],
     doctor: 'Dr. Moon',
     notes: 'Gave her fluids for the day. Wont let her eat until tomorrow. Try laxatives.',
+    userId: '000000000000000000000001',
   },
   {
     _id: '222222222222222222222203',
@@ -78,7 +85,27 @@ const posts = [
     prescriptions:['Insulin'],
     doctor: 'Dr. Ezra',
     notes: 'Have to give her a daily shot of insulin. Uh oh',
+    userId: '000000000000000000000002',
   }
 ];
 
-module.exports = {pawfiles, reminders, posts};
+const users = [
+  {
+    _id: '000000000000000000000001',
+    firstName: 'Nikkie',
+    lastName: 'Mashian',
+    username: 'nikmash',
+    // hash for "password"
+    password: '$2a$10$QJCIX42iD5QMxLRgHHBJre2rH6c6nI24UysmSYtkmeFv6X8uS1kgi'
+  },
+  {
+    _id: '000000000000000000000002',
+    firstName: 'Nate',
+    lastName: 'Pazooky',
+    username: 'npazooky',
+    // hash for "password"
+    password: '$2a$10$QJCIX42iD5QMxLRgHHBJre2rH6c6nI24UysmSYtkmeFv6X8uS1kgi'
+  }
+];
+
+module.exports = {pawfiles, reminders, posts, users};

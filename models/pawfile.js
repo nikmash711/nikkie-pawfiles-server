@@ -13,6 +13,7 @@ const pawfileSchema = new mongoose.Schema({
   bio: { type: String },
   reminders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Reminder'}],
   posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
 //// Customize output for `res.json(data)`, `console.log(data)` etc.

@@ -4,16 +4,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const Pawfile = require('../models/pawfile');
-const Reminder = require('../models/reminder');
 const Post = require('../models/post');
 
 const router = express.Router();
 
-/* ========== CEATE A POST ========== */
+/* ========== CREATE A POST ========== */
 router.post('/:pawfileId', (req, res, next) => {
   console.log('in post request');
   const newPost = req.body;
   const {pawfileId} = req.params;
+  const userId = req.user.id;
+  newPost.userId = userId;
+
   let postResponse;
   
   Post.create(newPost)
@@ -35,9 +37,10 @@ router.post('/:pawfileId', (req, res, next) => {
 router.put('/:pawfileId/:postId', (req, res, next) => {
   const{ pawfileId, postId }= req.params;
   const updatedPost = req.body;
+  const userId = req.user.id;
   let postResponse;
   
-  Post.findOneAndUpdate({_id: postId}, updatedPost, {new: true})
+  Post.findOneAndUpdate({_id: postId, userId: userId}, updatedPost, {new: true})
     .then(post=>{
       postResponse=post;
       return Pawfile.findById (pawfileId)
@@ -60,12 +63,14 @@ router.put('/:pawfileId/:postId', (req, res, next) => {
 /* ========== DELETE A POST ========== */
 router.delete('/:pawfileId/:postId', (req, res, next) => {
   const { pawfileId, postId } = req.params;
+  const userId = req.user.id;
+
 
   //remove the post
-  const postRemovePromise = Post.findOneAndDelete({_id: postId});
+  const postRemovePromise = Post.findOneAndDelete({_id: postId, userId: userId});
 
   // Don't delete the pawfile associated with the post to be deleted, but just remove the post from the posts array
-  const pawfilePostPullPromise = Pawfile.findByIdAndUpdate(pawfileId,
+  const pawfilePostPullPromise = Pawfile.findByIdAndUpdate({pawfileId, userId},
     { $pull: { posts: postId } }
   );
 
