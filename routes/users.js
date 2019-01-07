@@ -45,6 +45,10 @@ function tooLargeField(sizedFields, body){
   );
 }
 
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 /* CREATE A USER */
 router.post('/', (req,res,next) => {
 
@@ -118,6 +122,10 @@ router.post('/', (req,res,next) => {
   let {firstName, lastName, username, password} = req.body;
   firstName = firstName.trim();
   lastName = lastName.trim();
+
+  //capitalize first letter of firt and first letter of last 
+  firstName = capitalizeFirstLetter(firstName);
+  lastName = capitalizeFirstLetter(lastName);
 
   return User.hashPassword(password)
     .then(digest => {
@@ -213,6 +221,9 @@ router.put('/account', jwtAuth, (req,res,next) => {
   firstName = firstName.trim();
   lastName = lastName.trim();
 
+  firstName = capitalizeFirstLetter(firstName);
+  lastName = capitalizeFirstLetter(lastName);
+
   let updatedUser = {firstName, lastName, username};
 
   return User.find({_id: userId})
@@ -307,6 +318,7 @@ router.put('/password', jwtAuth, (req,res,next) => {
 
  
   let {oldPassword, newPassword} = req.body;
+  console.log('req body is', req.body)
 
   let user; 
 
@@ -321,12 +333,13 @@ router.put('/password', jwtAuth, (req,res,next) => {
     })
     .then(isValid => {
       if (!isValid) {
-        return Promise.reject({
-          reason: 'LoginError',
+        const err = {
           message: 'Incorrect old password',
-          location: 'password',
-          status: 401,
-        });
+          reason: 'ValidationError',
+          location: 'oldPassword',
+          status: 401
+        };    
+        next(err);
       }
       return User.hashPassword(newPassword);
     })
@@ -336,17 +349,9 @@ router.put('/password', jwtAuth, (req,res,next) => {
     })
     .then(result => {
       // The endpoint updates the user in the database and responds with a 201 status, a location header and a JSON representation of the user without the password.
-      return res.status(201).location(`http://${req.headers.host}/api/users/password/${result.id}`).json(result);
+      return res.json(result);
     })
     .catch(err => {
-      if (err.code === 11000) {
-        err = {
-          message: 'The username already exists',
-          reason: 'ValidationError',
-          location: 'username',
-          status: 422
-        }; 
-      }
       next(err);
     });
 });
