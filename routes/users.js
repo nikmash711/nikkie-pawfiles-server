@@ -236,7 +236,7 @@ router.put('/account', jwtAuth, (req,res,next) => {
     })
     .then(result => {
       // The endpoint updates the user in the database and responds with a 201 status, a location header and a JSON representation of the user without the password.
-      return res.status(201).location(`http://${req.headers.host}/api/users/account${result.id}`).json(result);
+      return res.json(result);
     })
     .catch(err => {
       if (err.code === 11000) {
@@ -339,7 +339,8 @@ router.put('/password', jwtAuth, (req,res,next) => {
           location: 'oldPassword',
           status: 401
         };    
-        next(err);
+        throw err;
+        //question: any other way to do this?
       }
       return User.hashPassword(newPassword);
     })
@@ -348,7 +349,7 @@ router.put('/password', jwtAuth, (req,res,next) => {
       return User.findOneAndUpdate({_id: userId}, updatedUser, {new: true});
     })
     .then(result => {
-      // The endpoint updates the user in the database and responds with a 201 status, a location header and a JSON representation of the user without the password.
+      console.log('about to return result');
       return res.json(result);
     })
     .catch(err => {
