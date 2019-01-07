@@ -127,6 +127,7 @@ router.post('/', (req,res,next) => {
         firstName,
         lastName
       };
+      console.log('the new user is', newUser);
       return User.create(newUser);
     })
     .then(result => {
@@ -224,7 +225,7 @@ router.put('/account', jwtAuth, (req,res,next) => {
     })
     .then(result => {
       // The endpoint updates the user in the database and responds with a 201 status, a location header and a JSON representation of the user without the password.
-      return res.status(201).location(`http://${req.headers.host}/api/users/${result.id}`).json(result);
+      return res.status(201).location(`http://${req.headers.host}/api/users/account${result.id}`).json(result);
     })
     .catch(err => {
       if (err.code === 11000) {
@@ -335,7 +336,7 @@ router.put('/password', jwtAuth, (req,res,next) => {
     })
     .then(result => {
       // The endpoint updates the user in the database and responds with a 201 status, a location header and a JSON representation of the user without the password.
-      return res.status(201).location(`http://${req.headers.host}/api/users/${result.id}`).json(result);
+      return res.status(201).location(`http://${req.headers.host}/api/users/password/${result.id}`).json(result);
     })
     .catch(err => {
       if (err.code === 11000) {

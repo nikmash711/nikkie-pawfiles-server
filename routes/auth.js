@@ -4,6 +4,8 @@
 
 const express = require('express');
 const jwt = require('jsonwebtoken'); 
+const User = require('../models/user');
+
 
 const {JWT_SECRET, JWT_EXPIRY} = require('../config');
 
@@ -20,6 +22,20 @@ router.post('/', function (req, res) {
 router.post('/refresh', (req, res) => {
   const authToken = createAuthToken(req.user);
   res.json({ authToken });
+});
+
+//this creates a new token 
+router.post('/refresh-profile', (req, res, next) => {
+  const userId = req.user.id;
+
+  User.findById({_id: userId})
+    .then(user=>{
+      const authToken = createAuthToken(user);
+      res.json({ authToken });
+    })
+    .catch(err=>{
+      next(err);
+    });
 });
 
 function createAuthToken(user){

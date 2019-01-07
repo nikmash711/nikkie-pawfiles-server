@@ -24,6 +24,7 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser:true, useCreateIndex : true })
       Reminder.insertMany(reminders),
       Post.insertMany(posts),
       User.insertMany(users),
+      User.createIndexes()
     ]);
   })
   .then(([pawfiles, reminders, posts, users]) => {
