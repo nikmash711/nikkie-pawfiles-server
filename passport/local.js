@@ -24,6 +24,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
           status: 401,
         });
       }
+      console.log('the user being validated is', user);
       return user.validatePassword(password);
     })
     .then(isValid => {

@@ -89,6 +89,7 @@ function validateReminders(reminders, userId){
 /* GET ALL PAWFILES */
 router.get('/', (req, res, next) => {
   const userId = req.user.id;
+  console.log('req.user', req.user); 
 
   Pawfile.find({userId})
     .populate('reminders')
