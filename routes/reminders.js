@@ -66,7 +66,7 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
   const userId = req.user.id;
 
   /***** Never trust users - validate input *****/
-  if (!mongoose.Types.ObjectId.isValid(pawfileId)) {
+  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(reminderId)) {
     const err = new Error('The `id` is not a valid Mongoose id!');
     err.status = 400;
     return next(err);
@@ -121,13 +121,20 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
     });
 });
 
-
+//Problem: delete not working well on Postman if user tries to delete reminder for another pet it has access to 
 /* ========== DELETE A REMINDER ========== */
 router.delete('/:pawfileId/:reminderId', (req, res, next) => {
   const { pawfileId, reminderId } = req.params;
   const userId = req.user.id;
   console.log('deleting reminder with userId', userId);
 
+  /***** Never trust users - validate input *****/
+  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(reminderId)) {
+    const err = new Error('The `id` is not a valid Mongoose id!');
+    err.status = 400;
+    return next(err);
+  }
+    
   //remove the reminder
   const reminderRemovePromise = Reminder.findOneAndDelete({_id:reminderId, userId});
 
