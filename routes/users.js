@@ -52,26 +52,28 @@ function capitalizeFirstLetter(str) {
 /* CREATE A USER */
 router.post('/', (req,res,next) => {
 
-  //First do a ton of validation 
+  //First do validation (dont trust client)
   const requiredFields = ['username', 'password', 'firstName', 'lastName'];
+  let missing= missingField(requiredFields, req.body);
 
-  if (missingField(requiredFields, req.body)) {
+  if (missing) {
     const err = {
-      message: `Missing '${missingField}' in request body`,
+      message: `Missing '${missing}' in request body`,
       reason: 'ValidationError',
-      location: `${missingField}`,
+      location: `${missing}`,
       status: 422
     };
     return next(err);
   }
 
   const stringFields = ['username', 'password', 'firstName', 'lastName'];
+  let notString= nonStringField(stringFields, req.body);
 
-  if (nonStringField(stringFields, req.body)) {
+  if (notString) {
     const err = {
       message: 'Incorrect field type: expected string',
       reason: 'ValidationError',
-      location: nonStringField,
+      location: notString,
       status: 422
     };
     return next(err);
@@ -80,12 +82,13 @@ router.post('/', (req,res,next) => {
   // If the username and password aren't trimmed we give an error.  Users might expect that these will work without trimming. We need to reject such values explicitly so the users know what's happening, rather than silently trimming them and expecting the user to understand.
   // We'll silently trim the other fields, because they aren't credentials used to log in, so it's less of a problem. QUESTION: where do we actually do
   const explicityTrimmedFields = ['username', 'password'];
+  let notTrimmed = nonTrimmedField(explicityTrimmedFields, req.body);
 
-  if (nonTrimmedField(explicityTrimmedFields, req.body)) {
+  if (notTrimmed) {
     const err = {
       message: 'Cannot start or end with whitespace',
       reason: 'ValidationError',
-      location: nonTrimmedField,
+      location: notTrimmed,
       status: 422
     };
     return next(err);
@@ -102,23 +105,26 @@ router.post('/', (req,res,next) => {
     }
   };
 
-  if (tooSmallField(sizedFields, req.body) || tooLargeField(sizedFields, req.body)) {
-    const message = tooSmallField
-      ? `Must be at least ${sizedFields[tooSmallField]
+  let tooSmall = tooSmallField(sizedFields, req.body);
+  let tooLarge = tooLargeField(sizedFields, req.body);
+
+  if (tooSmall || tooLarge) {
+    const message = tooSmall
+      ? `Must be at least ${sizedFields[tooSmall]
         .min} characters long`
-      : `Must be at most ${sizedFields[tooLargeField]
+      : `Must be at most ${sizedFields[tooLarge]
         .max} characters long`;
 
     const err = {
       message: message,
       reason: 'ValidationError',
-      location: tooSmallField || tooLargeField,
+      location: tooSmall || tooLarge,
       status: 422
     };    
     return next(err);
   }
  
-  // // Username and password were validated as pre-trimmed, but we should trim the fullname
+  // // Username and password were validated as pre-trimmed, but we should trim the first and last name
   let {firstName, lastName, username, password} = req.body;
   firstName = firstName.trim();
   lastName = lastName.trim();
@@ -135,12 +141,11 @@ router.post('/', (req,res,next) => {
         firstName,
         lastName
       };
-      console.log('the new user is', newUser);
       return User.create(newUser);
     })
-    .then(result => {
+    .then(user => {
       // The endpoint creates a new user in the database and responds with a 201 status, a location header and a JSON representation of the user without the password.
-      return res.status(201).location(`http://${req.headers.host}/api/users/${result.id}`).json(result);
+      return res.status(201).location(`http://${req.headers.host}/api/users/${user.id}`).json(user);
     })
     .catch(err => {
       if (err.code === 11000) {
@@ -159,38 +164,42 @@ router.post('/', (req,res,next) => {
 router.put('/account', jwtAuth, (req,res,next) => {
   const userId = req.user.id;
 
-  //First do a ton of validation 
+  //First do validation 
   const requiredFields = ['username', 'firstName', 'lastName'];
+  let missing= missingField(requiredFields, req.body);
 
-  if (missingField(requiredFields, req.body)) {
+
+  if (missing) {
     const err = {
-      message: `Missing '${missingField}' in request body`,
+      message: `Missing '${missing}' in request body`,
       reason: 'ValidationError',
-      location: `${missingField}`,
+      location: `${missing}`,
       status: 422
     };
     return next(err);
   }
 
   const stringFields = ['username', 'firstName', 'lastName'];
+  let notString = nonStringField(stringFields, req.body);
 
-  if (nonStringField(stringFields, req.body)) {
+  if (notString) {
     const err = {
       message: 'Incorrect field type: expected string',
       reason: 'ValidationError',
-      location: nonStringField,
+      location: notString,
       status: 422
     };
     return next(err);
   }
 
   const explicityTrimmedFields = ['username'];
+  let notTrimmed = nonTrimmedField(explicityTrimmedFields, req.body);
 
-  if (nonTrimmedField(explicityTrimmedFields, req.body)) {
+  if (notTrimmed) {
     const err = {
       message: 'Cannot start or end with whitespace',
       reason: 'ValidationError',
-      location: nonTrimmedField,
+      location: notTrimmed,
       status: 422
     };
     return next(err);
@@ -202,21 +211,22 @@ router.put('/account', jwtAuth, (req,res,next) => {
     },
   };
 
-  if (tooSmallField(sizedFields, req.body)) {
-    const message = `Must be at least ${sizedFields[tooSmallField]
+  let tooSmall = tooSmallField(sizedFields, req.body);
+
+  if (tooSmall) {
+    const message = `Must be at least ${sizedFields[tooSmall]
       .min} characters long`;
 
     const err = {
       message: message,
       reason: 'ValidationError',
-      location: tooSmallField,
+      location: tooSmall,
       status: 422
     };    
     return next(err);
   }
 
- 
-  // // Username and password were validated as pre-trimmed, but we should trim the fullname
+  // // Username and password were validated as pre-trimmed, but we should trim the first and last 
   let {firstName, lastName, username} = req.body;
   firstName = firstName.trim();
   lastName = lastName.trim();
@@ -234,9 +244,9 @@ router.put('/account', jwtAuth, (req,res,next) => {
       }
       return User.findOneAndUpdate({_id: userId}, updatedUser, {new: true});
     })
-    .then(result => {
+    .then(user => {
       // The endpoint updates the user in the database and responds with a 201 status, a location header and a JSON representation of the user without the password.
-      return res.json(result);
+      return res.json(user);
     })
     .catch(err => {
       if (err.code === 11000) {
@@ -255,39 +265,41 @@ router.put('/account', jwtAuth, (req,res,next) => {
 router.put('/password', jwtAuth, (req,res,next) => {
   const userId = req.user.id;
 
-  //First do a ton of validation 
+  //First do validation 
   const requiredFields = ['oldPassword', 'newPassword'];
+  let missing = missingField(requiredFields, req.body);
 
-  if (missingField(requiredFields, req.body)) {
+  if (missing) {
     const err = {
-      message: `Missing '${missingField}' in request body`,
+      message: `Missing '${missing}' in request body`,
       reason: 'ValidationError',
-      location: `${missingField}`,
+      location: `${missing}`,
       status: 422
     };
     return next(err);
   }
 
-
   const stringFields = ['oldPassword', 'newPassword'];
+  let notString = nonStringField(stringFields, req.body);
 
-  if (nonStringField(stringFields, req.body)) {
+  if (notString) {
     const err = {
       message: 'Incorrect field type: expected string',
       reason: 'ValidationError',
-      location: nonStringField,
+      location: notString,
       status: 422
     };
     return next(err);
   }
 
   const explicityTrimmedFields = ['newPassword'];
+  let notTrimmed = nonTrimmedField(explicityTrimmedFields, req.body);
 
-  if (nonTrimmedField(explicityTrimmedFields, req.body)) {
+  if (notTrimmed) {
     const err = {
       message: 'Cannot start or end with whitespace',
       reason: 'ValidationError',
-      location: nonTrimmedField,
+      location: notTrimmed,
       status: 422
     };
     return next(err);
@@ -300,17 +312,20 @@ router.put('/password', jwtAuth, (req,res,next) => {
     }
   };
 
-  if (tooSmallField(sizedFields, req.body) || tooLargeField(sizedFields, req.body)) {
-    const message = tooSmallField
-      ? `Must be at least ${sizedFields[tooSmallField]
+  let tooSmall = tooSmallField(sizedFields, req.body) ;
+  let tooLarge = tooLargeField(sizedFields, req.body) ;
+
+  if ( tooSmall|| tooLarge) {
+    const message = tooSmall
+      ? `Must be at least ${sizedFields[tooSmall]
         .min} characters long`
-      : `Must be at most ${sizedFields[tooLargeField]
+      : `Must be at most ${sizedFields[tooLarge]
         .max} characters long`;
 
     const err = {
       message: message,
       reason: 'ValidationError',
-      location: tooSmallField || tooLargeField,
+      location: tooSmall || tooLarge,
       status: 422
     };    
     return next(err);
@@ -318,7 +333,6 @@ router.put('/password', jwtAuth, (req,res,next) => {
 
  
   let {oldPassword, newPassword} = req.body;
-  console.log('req body is', req.body);
 
   let user; 
 
@@ -348,14 +362,12 @@ router.put('/password', jwtAuth, (req,res,next) => {
       const updatedUser = {password: digest};
       return User.findOneAndUpdate({_id: userId}, updatedUser, {new: true});
     })
-    .then(result => {
-      console.log('about to return result');
-      return res.json(result);
+    .then(user => {
+      return res.json(user);
     })
     .catch(err => {
       next(err);
     });
 });
-
 
 module.exports = router;
