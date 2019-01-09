@@ -353,8 +353,7 @@ router.put('/password', jwtAuth, (req,res,next) => {
           location: 'oldPassword',
           status: 401
         };    
-        throw err;
-        //question: any other way to do this?
+        return Promise.reject(err);
       }
       return User.hashPassword(newPassword);
     })

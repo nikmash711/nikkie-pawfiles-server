@@ -15,11 +15,35 @@ router.post('/:pawfileId', (req, res, next) => {
   const userId = req.user.id;
   newReminder.userId = userId;
 
-  console.log('the new reminder is', newReminder);
+  /***** Never trust users - validate input *****/
+  if (!mongoose.Types.ObjectId.isValid(pawfileId)) {
+    const err = new Error('The `id` is not a valid Mongoose id!');
+    err.status = 400;
+    return next(err);
+  }
+
+  if(!newReminder.note){
+    //this error should be displayed to user incase they forget to add a note. Dont trust client!
+    const err = {
+      message: 'Missing a note for the reminder!',
+      reason: 'MissingContent',
+      status: 400,
+      location: 'reminder'
+    };
+    return next(err);
+  }
+
   ///trying to update the pawfile and just send back the reminder so im not sending back everything
   let reminderResponse;
-  
-  Reminder.create(newReminder)
+
+  //Need to first check that the reminder being added a) belongs to this user and b) is a valid Pawfile id
+  Pawfile.find({_id: pawfileId, userId})
+    .then(pawfile=>{
+      if(pawfile.length===0){
+        return Promise.reject();
+      }
+      return Reminder.create(newReminder);
+    })
     .then(reminder => {
       reminderResponse=reminder;
       return Pawfile.findByIdAndUpdate(pawfileId, {$push: {reminders: reminder.id}}, {new: true})
@@ -41,9 +65,42 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
   const updatedReminder = req.body;
   const userId = req.user.id;
 
+  /***** Never trust users - validate input *****/
+  if (!mongoose.Types.ObjectId.isValid(pawfileId)) {
+    const err = new Error('The `id` is not a valid Mongoose id!');
+    err.status = 400;
+    return next(err);
+  }
+  
+  if(!updatedReminder.note){
+    //this error should be displayed to user incase they forget to add a note. Dont trust client!
+    const err = {
+      message: 'Missing a note for the reminder!',
+      reason: 'MissingContent',
+      status: 400,
+      location: 'reminder'
+    };
+    return next(err);
+  }
   
   let reminderResponse;
-  Reminder.findOneAndUpdate({_id: reminderId, userId}, updatedReminder, {new: true})
+  
+
+  //check if user is authorized to update this pawfile, and the pawfile has this reminder: 
+  Pawfile.find({_id: pawfileId, userId, reminders:{$in: reminderId}})
+    .then(pawfile=>{
+      if(pawfile.length===0){
+        return Promise.reject();
+      }
+      //check to see if user has access to this reminder: 
+      return Reminder.find({_id: reminderId, userId});
+    })
+    .then(reminder=>{
+      if(reminder.length===0){
+        return Promise.reject();
+      }
+      return Reminder.findOneAndUpdate({_id: reminderId, userId}, updatedReminder, {new: true});
+    })
     .then(reminder=>{
       reminderResponse = reminder;
       //now that reminder has been updated, resend the updated Pawfile
@@ -69,7 +126,7 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
 router.delete('/:pawfileId/:reminderId', (req, res, next) => {
   const { pawfileId, reminderId } = req.params;
   const userId = req.user.id;
-  console.log('deleting reminder with userId', userId)
+  console.log('deleting reminder with userId', userId);
 
   //remove the reminder
   const reminderRemovePromise = Reminder.findOneAndDelete({_id:reminderId, userId});
