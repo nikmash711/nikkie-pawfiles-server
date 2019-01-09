@@ -318,7 +318,7 @@ router.put('/password', jwtAuth, (req,res,next) => {
 
  
   let {oldPassword, newPassword} = req.body;
-  console.log('req body is', req.body)
+  console.log('req body is', req.body);
 
   let user; 
 
