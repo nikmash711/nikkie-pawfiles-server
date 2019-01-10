@@ -16,7 +16,7 @@ router.post('/:pawfileId', (req, res, next) => {
   newReminder.userId = userId;
 
   /***** Never trust users - validate input *****/
-  if (!mongoose.Types.ObjectId.isValid(pawfileId)) {
+  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId) ) {
     const err = new Error('The `id` is not a valid Mongoose id!');
     err.status = 400;
     return next(err);
@@ -66,7 +66,7 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
   const userId = req.user.id;
 
   /***** Never trust users - validate input *****/
-  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(reminderId)) {
+  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(reminderId) || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error('The `id` is not a valid Mongoose id!');
     err.status = 400;
     return next(err);
@@ -130,7 +130,7 @@ router.delete('/:pawfileId/:reminderId', (req, res, next) => {
   console.log('deleting reminder with userId', userId);
 
   /***** Never trust users - validate input *****/
-  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(reminderId)) {
+  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(reminderId) || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error('The `id` is not a valid Mongoose id!');
     err.status = 400;
     return next(err);
