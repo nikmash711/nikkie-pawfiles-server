@@ -64,7 +64,7 @@ router.post('/', (req, res, next) => {
   const userId = req.user.id;
   newPawfile.userId = userId;
 
-  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId)) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error('The `id` is not a valid Mongoose id!');
     err.status = 400;
     return next(err);
@@ -82,7 +82,7 @@ router.post('/', (req, res, next) => {
 
   Pawfile.create(newPawfile)
     .then(pawfile => {
-      res.location(`http://${req.headers.host}/api/pawfiles/${pawfile.id}`).status(201).json(pawfile);
+      res.location(`http://${req.headers.host}/pawfiles/${pawfile.id}`).status(201).json(pawfile);
     })
     .catch(err => {
       next(err);

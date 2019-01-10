@@ -145,7 +145,7 @@ router.post('/', (req,res,next) => {
     })
     .then(user => {
       // The endpoint creates a new user in the database and responds with a 201 status, a location header and a JSON representation of the user without the password.
-      return res.status(201).location(`http://${req.headers.host}/api/users/${user.id}`).json(user);
+      return res.status(201).location(`http://${req.headers.host}/users/${user.id}`).json(user);
     })
     .catch(err => {
       if (err.code === 11000) {

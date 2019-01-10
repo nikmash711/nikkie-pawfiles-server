@@ -42,12 +42,12 @@ const options = {session: false, failWithError: true};
 const jwtAuth = passport.authenticate('jwt', options);
 const localAuth = passport.authenticate('local', options);
 
-app.use('/api/pawfiles', jwtAuth, pawfilesRouter);
-app.use('/api/reminders', jwtAuth, remindersRouter);
-app.use('/api/posts', jwtAuth, postsRouter);
-app.use('/api/users', usersRouter);
-app.use('/api/login', localAuth, authRouter); //for login
-app.use('/api', jwtAuth, authRouter); //for refresh
+app.use('/pawfiles', jwtAuth, pawfilesRouter);
+app.use('/reminders', jwtAuth, remindersRouter);
+app.use('/posts', jwtAuth, postsRouter);
+app.use('/users', usersRouter);
+app.use('/login', localAuth, authRouter); //for login
+app.use('/', jwtAuth, authRouter); //for refresh
 //Any endpoint that passes the jwtAuth strategy and is validted: The `req.user` has a value now because of `done(null, payload.user)` in JWT Strategy
 
 // Custom 404 Not Found route handler

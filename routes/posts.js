@@ -50,7 +50,7 @@ router.post('/:pawfileId', (req, res, next) => {
         .populate('posts');
     })
     .then(()=>{
-      return res.location(`http://${req.headers.host}/api/posts/${postResponse.id}`).status(201).json(postResponse);
+      return res.location(`http://${req.headers.host}/posts/${postResponse.id}`).status(201).json(postResponse);
     })
     .catch(err => {
       next(err);

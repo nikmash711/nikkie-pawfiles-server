@@ -36,13 +36,13 @@ describe('Pawfile API - Users', function () {
     return mongoose.disconnect();
   });
   
-  describe('POST /api/users', function () {
+  describe('POST /users', function () {
     
     it('Should create a new user', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({ username, password, firstName, lastName })
         .then(_res => {
           res = _res;
@@ -71,7 +71,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({password, firstName, lastName})
         .then(_res => {
           res = _res;
@@ -87,7 +87,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({username, firstName, lastName})
         .then(_res => {
           res = _res;
@@ -103,7 +103,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({username:123, password, firstName, lastName})
         .then(_res => {
           res = _res;
@@ -119,7 +119,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({username, password:123, firstName, lastName})
         .then(_res => {
           res = _res;
@@ -135,7 +135,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({username: '  nottrimmed', password, firstName, lastName})
         .then(_res => {
           res = _res;
@@ -151,7 +151,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({username, password:'  nottrimmed', firstName, lastName})
         .then(_res => {
           res = _res;
@@ -167,7 +167,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({username: '', password, firstName, lastName})
         .then(_res => {
           res = _res;
@@ -183,7 +183,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({username, password: '1234', firstName, lastName})
         .then(_res => {
           res = _res;
@@ -199,7 +199,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({username, password: new Array(73).fill('a').join(''), firstName, lastName})
         .then(_res => {
           res = _res;
@@ -223,7 +223,7 @@ describe('Pawfile API - Users', function () {
         //try to make second user with same name
           return chai
             .request(app)
-            .post('/api/users')
+            .post('/users')
             .send({username, password, firstName, lastName});
         })
         .then(_res => {
@@ -241,7 +241,7 @@ describe('Pawfile API - Users', function () {
       let res;
       return chai
         .request(app)
-        .post('/api/users')
+        .post('/users')
         .send({ username, password, firstName: '  Nikkie ', lastName: '  Mashian' })
         .then(_res => {
           res = _res;

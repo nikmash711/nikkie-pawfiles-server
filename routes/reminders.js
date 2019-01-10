@@ -51,7 +51,7 @@ router.post('/:pawfileId', (req, res, next) => {
         .populate('posts');
     })
     .then(()=>{
-      return res.location(`http://${req.headers.host}/api/reminders/${reminderResponse.id}`).status(201).json(reminderResponse);
+      return res.location(`http://${req.headers.host}/reminders/${reminderResponse.id}`).status(201).json(reminderResponse);
     })
     .catch(err => {
       next(err);
