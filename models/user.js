@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
   password: {type: String, required: true},
 });
 
+userSchema.index({username: 1, userId: 1}, {unique:true}); // usernames should be unique for each user. The solution is to use compound indexes.
+
 // This is like using a serialize method
 userSchema.set('toJSON', {
   virtuals: true,     // include built-in virtual `id`

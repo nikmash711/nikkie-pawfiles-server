@@ -6,7 +6,6 @@ const express = require('express');
 const jwt = require('jsonwebtoken'); 
 const User = require('../models/user');
 
-
 const {JWT_SECRET, JWT_EXPIRY} = require('../config');
 
 const router = express.Router();
