@@ -9,6 +9,145 @@ const Post = require('../models/post');
 
 const router = express.Router();
 
+/* GET ALL PAWFILES */
+router.get('/', (req, res, next) => {
+  const userId = req.user.id;
+
+  /***** Never trust users - validate input *****/
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('The `id` is not a valid Mongoose id!');
+    err.status = 400;
+    return next(err);
+  }
+
+  Pawfile.find({userId})
+    .populate('reminders')
+    .populate('posts')
+    .then(pawfiles => {
+      res.json(pawfiles);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+router.get('/:pawfileId', (req, res, next) => {
+  const {pawfileId} = req.params;
+  const userId = req.user.id;
+
+  /***** Never trust users - validate input *****/
+  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('The `id` is not a valid Mongoose id!');
+    err.status = 400;
+    return next(err);
+  }
+
+  Pawfile.findOne({_id: pawfileId, userId})
+    .populate('reminders')
+    .populate('posts')
+    .then(pawfile => {
+      if(pawfile){
+        res.json(pawfile);
+      }
+      else{
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+/* ========== POST/CREATE A PAWFILE ========== */
+router.post('/', (req, res, next) => {
+  const newPawfile = req.body;
+  const userId = req.user.id;
+  newPawfile.userId = userId;
+
+  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('The `id` is not a valid Mongoose id!');
+    err.status = 400;
+    return next(err);
+  }
+
+  if(!newPawfile.name || !newPawfile.gender || !newPawfile.img || !newPawfile.species){
+    const err = {
+      message: 'Missing information for the pawfile!',
+      reason: 'MissingContent',
+      status: 400,
+      location: 'pawfile'
+    };
+    return next(err);
+  }
+
+  Pawfile.create(newPawfile)
+    .then(pawfile => {
+      res.location(`http://${req.headers.host}/api/pawfiles/${pawfile.id}`).status(201).json(pawfile);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+/* ========== PUT/UPDATE A SINGLE PAWFILE ========== */
+router.put('/:pawfileId', (req, res, next) => {
+  const{ pawfileId }= req.params;
+  const updatedPawfile = req.body;
+  const userId = req.user.id;
+
+  if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error('The `id` is not a valid Mongoose id!');
+    err.status = 400;
+    return next(err);
+  }
+  
+  if(!updatedPawfile.name || !updatedPawfile.gender || !updatedPawfile.img || !updatedPawfile.species){
+    const err = {
+      message: 'Missing information for the pawfile!',
+      reason: 'MissingContent',
+      status: 400,
+      location: 'pawfile'
+    };
+    return next(err);
+  }
+
+  Pawfile.findOneAndUpdate({_id: pawfileId, userId}, updatedPawfile, {new: true}).populate('reminders') .populate('posts')
+    .then(pawfile => {
+      if(pawfile){
+        res.status(200).json(pawfile);
+      }
+      else{
+        next();
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+/* ========== DELETE/REMOVE A SINGLE ITEM ========== */
+router.delete('/:pawfileId', (req, res, next) => {
+  const { pawfileId } = req.params;
+  const userId = req.user.id;
+
+  Pawfile.findOneAndDelete({_id:pawfileId, userId})
+    .then((pawfile) => {
+      if(!pawfile){
+        // if trying to delete something that no longer exists or never did
+        return next();
+      }
+      else{
+        res.sendStatus(204);
+      }
+    })
+    .catch(err => {
+      next(err);
+    });
+});
+
+
+module.exports = router;
+
 //Need to do some validation to make sure the reminders/posts belong to the user: 
 
 // function validatePosts(posts, userId){
@@ -84,114 +223,3 @@ const router = express.Router();
 //     });
 
 // }
-
-/* GET ALL PAWFILES */
-router.get('/', (req, res, next) => {
-  const userId = req.user.id;
-  console.log('req.user', req.user); 
-
-  Pawfile.find({userId})
-    .populate('reminders')
-    .populate('posts')
-    .then(pawfiles => {
-      res.json(pawfiles);
-    })
-    .catch(err => {
-      next(err);
-    });
-});
-
-router.get('/:pawfileId', (req, res, next) => {
-  const {pawfileId} = req.params;
-  const userId = req.user.id;
-
-  Pawfile.findOne({_id: pawfileId, userId})
-    .populate('reminders')
-    .populate('posts')
-    .then(pawfile => {
-      if(pawfile){
-        res.json(pawfile);
-      }
-      else{
-        next();
-      }
-    })
-    .catch(err => {
-      next(err);
-    });
-});
-
-/* ========== POST/CREATE A PAWFILE ========== */
-router.post('/', (req, res, next) => {
-  const newPawfile = req.body;
-  const userId = req.user.id;
-  newPawfile.userId = userId;
-
-  console.log('the new pawfile is', newPawfile);
-
-  Promise.all([
-    // validatePosts(newPawfile.posts, userId),
-    // validateReminders(newPawfile.reminders, userId)
-  ])
-    .then(()=> Pawfile.create(newPawfile))
-    .then(pawfile => {
-      res.location(`http://${req.headers.host}/api/pawfiles/${pawfile.id}`).status(201).json(pawfile);
-    })
-    .catch(err => {
-      next(err);
-    });
-});
-
-/* ========== PUT/UPDATE A SINGLE PAWFILE ========== */
-router.put('/:pawfileId', (req, res, next) => {
-  const{ pawfileId }= req.params;
-  const updatedPawfile = req.body;
-  const userId = req.user.id;
-
-  Promise.all([
-    //but what if there are no folders or tags? shouldn't it not do this? that'll resolve in the validate
-    // validatePosts(updatedPawfile.posts, userId),
-    // validateReminders(updatedPawfile.reminders, userId)
-  ])
-    .then(()=>{
-      return  Pawfile.findOneAndUpdate({_id: pawfileId, userId}, updatedPawfile, {new: true})
-        .populate('reminders')
-        .populate('posts');
-    })
- 
-    .then(pawfile => {
-      if(pawfile){
-        console.log('pawfile being sent back is', pawfile);
-        res.status(200).json(pawfile);
-      }
-      else{
-        next();
-      }
-    })
-    .catch(err => {
-      next(err);
-    });
-});
-
-/* ========== DELETE/REMOVE A SINGLE ITEM ========== */
-router.delete('/:pawfileId', (req, res, next) => {
-  const { pawfileId } = req.params;
-  const userId = req.user.id;
-
-  Pawfile.findOneAndDelete({_id:pawfileId, userId})
-    .then((pawfile) => {
-      if(!pawfile){
-        // if trying to delete something that no longer exists or never did
-        return next();
-      }
-      else{
-        res.sendStatus(204);
-      }
-    })
-    .catch(err => {
-      next(err);
-    });
-});
-
-
-module.exports = router;

@@ -36,7 +36,7 @@ router.post('/:pawfileId', (req, res, next) => {
   ///trying to update the pawfile and just send back the reminder so im not sending back everything
   let reminderResponse;
 
-  //Need to first check that the reminder being added a) belongs to this user and b) is a valid Pawfile id
+  //Need to first check that the reminder being added to the pawfile a) belongs to this user and b) is a valid Pawfile id
   Pawfile.find({_id: pawfileId, userId})
     .then(pawfile=>{
       if(pawfile.length===0){
@@ -121,7 +121,8 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
     });
 });
 
-//Problem: delete not working well on Postman if user tries to delete reminder for another pet it has access to 
+//Reminder gets deleted, but not from the pawfiles reminders - the pawfileReminderPullPromise is not working
+
 /* ========== DELETE A REMINDER ========== */
 router.delete('/:pawfileId/:reminderId', (req, res, next) => {
   const { pawfileId, reminderId } = req.params;
@@ -143,8 +144,21 @@ router.delete('/:pawfileId/:reminderId', (req, res, next) => {
     { $pull: { reminders: reminderId } }
   );
 
-  // delete the reminder and update the pawfile in parallel using .all
-  Promise.all([reminderRemovePromise, pawfileReminderPullPromise])
+  Pawfile.find({_id: pawfileId, userId, reminders:{$in: reminderId}})
+    .then(pawfile=>{
+      if(pawfile.length===0){
+        return Promise.reject();
+      }
+      //check to see if user has access to this reminder: 
+      return Reminder.find({_id: reminderId, userId});
+    })
+    .then(reminder=>{
+      if(reminder.length===0){
+        return Promise.reject();
+      }
+      // delete the reminder and update the pawfile in parallel using .all
+      return Promise.all([reminderRemovePromise, pawfileReminderPullPromise]);
+    })
     .then((reminder) => {
       // We want to make sure that it doesn't try to delete a reminder that no longer exists or never existed. To prevent that, we need to check this: 
       if(reminder[0]!==null){
