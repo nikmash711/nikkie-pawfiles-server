@@ -24,7 +24,6 @@ const localStrategy = new LocalStrategy((username, password, done) => {
           status: 401,
         });
       }
-      console.log('the user being validated is', user);
       return user.validatePassword(password);
     })
     .then(isValid => {
@@ -39,7 +38,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
       return done(null, user); //no error, valid user. login success - sets `req.user = user` which will be used later to assign the user a token 
     })
     .catch(err => {
-      console.log('THE error in local.js is:', err, 'and the status is:', err.status);//status is not set yet 
+      //status is not set yet 
       if (err.reason === 'LoginError') {
         return done(err);
         // return done(null, false); //no error, but invalid user - jump to our error handler (bc we said failWithError:true). After this, its status gets set to 401

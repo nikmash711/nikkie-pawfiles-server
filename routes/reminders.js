@@ -127,7 +127,6 @@ router.put('/:pawfileId/:reminderId', (req, res, next) => {
 router.delete('/:pawfileId/:reminderId', (req, res, next) => {
   const { pawfileId, reminderId } = req.params;
   const userId = req.user.id;
-  console.log('deleting reminder with userId', userId);
 
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(reminderId) || !mongoose.Types.ObjectId.isValid(userId)) {

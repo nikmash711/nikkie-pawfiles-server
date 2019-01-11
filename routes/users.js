@@ -339,7 +339,6 @@ router.put('/password', jwtAuth, (req,res,next) => {
   User.find({_id: userId})
     .then(results => {
       user = results[0];
-      console.log('the user is', user);
       if (!user) {
         return next();
       }
