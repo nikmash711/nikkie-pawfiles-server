@@ -1,27 +1,38 @@
 
-# Pawfiles
+# [Pawfiles](https://pawfiles.herokuapp.com/)
 
-## Summary of App:
-Wouldn't it be nice to keep a timeline of your pet's life?
-From their medical records to remembering something hilarious they did
-the other day, it can be easy to forget important things about your
-furry best friend. Well now you can keep track of it all with
-Pawfiles! Pawfiles helps you keep a simple timeline on your pet:
-whether it's what the vet said at their last appointment, a record of
-their vaccination schedule, or a cute memory you just don't want to
-forget, this is the place to document it all :)
+## Description
+Wouldn't it be nice to keep a timeline of your pet's life? From your pet's doctor, vaccination schedule, and medical history to remembering something hilarious they did the other day, it can be easy to forget important things about your furry best friend. Well fur-tunately Pawfiles is here to help you keep track of your pet's most important moments! Whether it's a medical record or a cute memory you just don't want to forget, this is the purr-fect place to document it all!
 
 ## Features: 
-- [x] 1. User can create an account for themselves with a first name, last name, username, and password
-- [x] 2. User will be directed to a home page where they can see all their pets, can add a new pet pawfile by filling out a form (name, species, breed, birthday, gender, profile photo, brief bio.), can sort their pets by age or name, and search their pets
-- [x] 3. Single user can have as many "pawfiles" as they do pets!
-- [x] 4. User can add posts for each pet - it can be a memory post with a title, description, date, and a photo URL corresponding to the memory, OR a medical related post where they can include a title, description, symptoms, labs, vet, location, date, and a link to a file. Once posted, only the info filled out will show (empty fields will not be displayed).
-- [x] 5. Posts will be organized on the Pawfile chronologically by the date the user inputted
-- [x] 6. User can search for specific posts on the Pawfile, and filter it by category
-- [x] 7. There will be a sidebar on the Pawfile with a brief bio about the pet as well as a list of reminders for that pet: for example, need to buy more litter, or go get groomed next week, etc.
-- [x] 8. The URL of the image the user links will show an actual image once posted, and the user can click on that image to see an enlarged version of it (images should be standard size) 
-- [x] 9. Navbar with Home/My Pets, About, Settings, Logout.
-- [x] 10. User can edit and delete their posts and info about their pets (and pictures). 
-- [x] 11. User can change their password, first name, last name, username under a Settings tab when they're logged in
-- [x] 12. Users can edit/delete their posts, reminders, update their pet's profile photo, etc.
-- [x] 13. Users will only be logged out after a certain amount of time, not every time they refresh or leave the browser
+:white_check_mark: Users can create an account for themselves with their first and last name, a username, and password
+<img src="https://drive.google.com/uc?export=view&id=1VDqMikkH2TIo6T85rhvAGw-WoEPQyWWf" alt="homepage" width="400px" />
+<img src="https://drive.google.com/uc?export=view&id=1BFI7bm8jbBtEjPOkyOR7vn2UR1drR98V" alt="homepage" width="400px" />
+
+:white_check_mark: Users will be directed to a home page where they can see all of their pets, can add a new pet pawfile by filling out a brief form, can sort their pets by age or name, and search their pets. Users can have as many pawfiles as they do pets!
+
+<img src="https://drive.google.com/uc?export=view&id=1G6W9OH4WxP-sSxTApCLP4OE8E8b-vOwA" alt="homepage" width="400px" />
+
+:white_check_mark: Users can add posts for each pet - it can be a memory post with a photo corresponding to the memory, or a medical post to document symptoms, vet diagnosis, medications, and vaccinations
+
+<img src="https://drive.google.com/uc?export=view&id=1_63xErbm1oZHqFnE4mRHffjKXxdFwmTZ" alt="homepage" width="400px" />
+
+:white_check_mark: Posts are organized on the Pawfile chronologically by the date the user inputted, but users can search for a specific post and filter categorically
+
+:white_check_mark: Users can create reminders for each pet, with an optional time or date
+
+:white_check_mark: Users can edit and delete posts, reminders, pictures, or any information in their pet's pawfile 
+
+:white_check_mark: Users can update their password, first name, last name, or username after they're logged in
+
+## Tech Stack: 
+Full-stack app with React for the frontend, Redux for state management, Node/Express for the backend, and MongoDB for the database
+
+## Future Updates
+:point_right: Users can upload photos and files directly from their device rather than needing to provide a URL to an image
+
+:point_right: Users will provide emails at login and can consequently reset passwords if they're unable to login 
+
+:point_right: Users will have a more convenient way of accessing their pet's full vaccination, prescription, and doctor history depending on the posts they've created
+
+:point_right: Users can filter their posts by date 
