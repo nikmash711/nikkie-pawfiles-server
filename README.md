@@ -26,20 +26,47 @@ Wouldn't it be nice to keep a timeline of your pet's life? From a list of their 
 :white_check_mark: Users can update their password, first name, last name, or username after they're logged in
 
 ## Specifics: 
-Full-stack app with React for the frontend, Redux for state management, Node/Express for the backend, MongoDB for the database, JWTs for authentication, Mocha/Chai for server-side testing, Enzyme for React component testing.
+Full-stack app with:
+- React for the frontend
+- Redux for state management
+- Node/Express for the backend
+- MongoDB for the database
+- JWTs for authentication
+- Mocha/Chai for server-side testing
+- Enzyme for React component testing
 
-[Server Repo](https://github.com/thinkful-ei26/nikkie-pawfiles-server)
+[Client Repo](https://github.com/thinkful-ei26/nikkie-pawfiles-client)
 
 ##### Codebase:
-- public
-- src
-  - actions
-  - components
-    - home
-    - onboarding
-    - pawfilepage
-    - settings
-  - reducers
+``` bash
+├── README.md
+├── config.js
+├── db
+│   └── seed
+│       └── data.js
+├── models
+│   ├── pawfile.js
+│   ├── post.js
+│   ├── reminder.js
+│   ├── user.js
+│   └── vaccination.js
+├── package-lock.json
+├── package.json
+├── passport
+│   ├── jwt.js
+│   └── local.js
+├── routes
+│   ├── auth.js
+│   ├── pawfiles.js
+│   ├── posts.js
+│   ├── reminders.js
+│   └── users.js
+├── server.js
+├── test
+│   └── users.test.js
+└── utils
+    └── seed-database.js
+```
 
 ## Future Updates
 :point_right: Users can upload photos and files directly from their device rather than needing to provide a URL to an image
