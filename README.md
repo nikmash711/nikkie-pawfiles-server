@@ -25,7 +25,7 @@ Wouldn't it be nice to keep a timeline of your pet's life? From a list of their 
 
 :white_check_mark: Users can update their password, first name, last name, or username after they're logged in
 
-## Specifics: 
+## Tech Stack: 
 Full-stack app with:
 - React for the frontend
 - Redux for state management
@@ -35,9 +35,16 @@ Full-stack app with:
 - Mocha/Chai for server-side testing
 - Enzyme for React component testing
 
-[Client Repo](https://github.com/thinkful-ei26/nikkie-pawfiles-client)
+## Future Updates
+:point_right: Users can upload photos and files directly from their device rather than needing to provide a URL to an image
 
-##### Codebase:
+:point_right: Users will provide emails at login and can consequently reset passwords if they're unable to login 
+
+:point_right: Users will have a more convenient way of accessing their pet's full vaccination, prescription, and doctor history depending on the posts they've created
+
+:point_right: Users can filter their posts by date 
+
+## File Tree:
 ``` bash
 ├── README.md
 ├── config.js
@@ -68,11 +75,4 @@ Full-stack app with:
     └── seed-database.js
 ```
 
-## Future Updates
-:point_right: Users can upload photos and files directly from their device rather than needing to provide a URL to an image
-
-:point_right: Users will provide emails at login and can consequently reset passwords if they're unable to login 
-
-:point_right: Users will have a more convenient way of accessing their pet's full vaccination, prescription, and doctor history depending on the posts they've created
-
-:point_right: Users can filter their posts by date 
+[Client Repo](https://github.com/thinkful-ei26/nikkie-pawfiles-client)
