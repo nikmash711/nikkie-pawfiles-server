@@ -130,7 +130,12 @@ router.delete('/:pawfileId', (req, res, next) => {
   const { pawfileId } = req.params;
   const userId = req.user.id;
 
-  Pawfile.findOneAndDelete({_id:pawfileId, userId})
+  const postsRemovePromise = Post.deleteMany({userId: userId});
+  const remindersRemovePromise = Reminder.deleteMany({userId: userId});
+  const pawfileDeletePromise =  Pawfile.findOneAndDelete({_id:pawfileId, userId})
+
+
+  return Promise.all([postsRemovePromise, remindersRemovePromise, pawfileDeletePromise])
     .then((pawfile) => {
       if(!pawfile){
         // if trying to delete something that no longer exists or never did
