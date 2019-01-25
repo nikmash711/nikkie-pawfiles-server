@@ -126,8 +126,7 @@ router.put('/:pawfileId', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-
-  
+   
   if((!updatedPawfile.name || !updatedPawfile.gender || !updatedPawfile.species) && !file){
     const err = {
       message: 'Missing information for the pawfile!',
