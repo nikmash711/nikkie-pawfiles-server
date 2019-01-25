@@ -127,7 +127,6 @@ router.put('/:pawfileId', (req, res, next) => {
     return next(err);
   }
 
-  console.log('the pawfile to be updated is', updatedPawfile);
   
   if((!updatedPawfile.name || !updatedPawfile.gender || !updatedPawfile.species) && !file){
     const err = {
