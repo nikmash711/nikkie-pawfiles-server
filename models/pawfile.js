@@ -6,7 +6,7 @@ const pawfileSchema = new mongoose.Schema({
   name: { type: String, required: true },
   species: { type: String, required: true },
   gender: { type: String, required: true }, 
-  img: { type: String, required: true },
+  img: { type: Object, required: true},
   breed: { type: String },
   weight: { type: String }, 
   birthday: { type: String },

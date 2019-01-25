@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('passport');
+const cloudinary = require('cloudinary');
 
 const localStrategy = require('./passport/local');
 const jwtStrategy = require('./passport/jwt');
@@ -16,6 +17,12 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
 const {CLIENT_ORIGIN, PORT, MONGODB_URI } = require('./config');
+
+cloudinary.config({ 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET
+});
 
 const app = express();
 

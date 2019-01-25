@@ -11,7 +11,10 @@ const pawfiles =[
     weight: '8 lbs',
     birthday: '2016-10-26',
     bio: 'Meow. I\'m a cute troublemaker. I\'ll purr then hiss. Give me scritches?',
-    img: 'https://i.ibb.co/y8hFnkL/2.jpg',
+    img: {
+      public_id: 'a0t3vhjkae7chm6ncoau',
+      url: 'https://res.cloudinary.com/dnn1jf0pl/image/upload/v1548123621/a0t3vhjkae7chm6ncoau.jpg',
+    },
     reminders: ['333333333333333333333301', '333333333333333333333302'],
     posts: ['222222222222222222222201', '222222222222222222222202'],
   },
@@ -24,7 +27,10 @@ const pawfiles =[
     breed: 'Pom/Yorkie Mix',
     birthday: '2010-01-10',
     bio: 'Ruff. I want to always play and go on walks. Did you say snack?',
-    img: 'https://i.ibb.co/stMyFMp/IMG-6267.png',
+    img: {
+      public_id: 'w4luypagygysrauycbag',
+      url: 'https://res.cloudinary.com/dnn1jf0pl/image/upload/v1548282108/w4luypagygysrauycbag.jpg',
+    },
     reminders: ['333333333333333333333303'],
     posts: ['222222222222222222222203']
   }, 

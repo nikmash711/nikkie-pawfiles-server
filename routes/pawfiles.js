@@ -2,15 +2,27 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cloudinary = require('cloudinary');
+const formData = require('express-form-data');
 
 const Pawfile = require('../models/pawfile');
 const Reminder = require('../models/reminder');
 const Post = require('../models/post');
 
+cloudinary.config({ 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET
+});
+
 const router = express.Router();
+
+router.use(formData.parse());
+
 
 /* GET ALL PAWFILES */
 router.get('/', (req, res, next) => {
+  console.log('IN GET');
   const userId = req.user.id;
 
   /***** Never trust users - validate input *****/
@@ -64,13 +76,15 @@ router.post('/', (req, res, next) => {
   const userId = req.user.id;
   newPawfile.userId = userId;
 
+  const file = Object.values(req.files);
+
   if (!mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error('The `id` is not a valid Mongoose id!');
     err.status = 400;
     return next(err);
   }
 
-  if(!newPawfile.name || !newPawfile.gender || !newPawfile.img || !newPawfile.species){
+  if(!newPawfile.name || !newPawfile.gender || !newPawfile.species || !file){
     const err = {
       message: 'Missing information for the pawfile!',
       reason: 'MissingContent',
@@ -80,7 +94,16 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
-  Pawfile.create(newPawfile)
+  // first upload the image to cloudinary
+  cloudinary.uploader.upload(file[0].path)
+    .then(results => {
+      console.log('results from cloudinary:', results);
+      newPawfile.img = {
+        public_id: results.public_id,
+        url: results.secure_url,
+      };
+      return Pawfile.create(newPawfile);
+    })
     .then(pawfile => {
       res.location(`http://${req.headers.host}/pawfiles/${pawfile.id}`).status(201).json(pawfile);
     })
@@ -95,13 +118,18 @@ router.put('/:pawfileId', (req, res, next) => {
   const updatedPawfile = req.body;
   const userId = req.user.id;
 
+  const file = Object.values(req.files);
+  console.log('FILE IS', file, 'with length', file.length);
+
   if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId)) {
     const err = new Error('The `id` is not a valid Mongoose id!');
     err.status = 400;
     return next(err);
   }
+
+  console.log('the pawfile to be updated is', updatedPawfile);
   
-  if(!updatedPawfile.name || !updatedPawfile.gender || !updatedPawfile.img || !updatedPawfile.species){
+  if((!updatedPawfile.name || !updatedPawfile.gender || !updatedPawfile.species) && !file){
     const err = {
       message: 'Missing information for the pawfile!',
       reason: 'MissingContent',
@@ -111,18 +139,49 @@ router.put('/:pawfileId', (req, res, next) => {
     return next(err);
   }
 
-  Pawfile.findOneAndUpdate({_id: pawfileId, userId}, updatedPawfile, {new: true}).populate('reminders') .populate('posts')
-    .then(pawfile => {
-      if(pawfile){
-        res.status(200).json(pawfile);
-      }
-      else{
-        next();
-      }
-    })
-    .catch(err => {
-      next(err);
-    });
+  //if theres an image/file being updated, we need to upload that to cloudinary, and then do the next step: 
+  if(file.length===1){
+    console.log('GOING to reupload to cloudinary');
+    cloudinary.uploader.upload(file[0].path)
+      .then(results => {
+        console.log('RESULTS from cloudinary:', results);
+        updatedPawfile.img = {
+          public_id: results.public_id,
+          url: results.secure_url,
+        };
+        return updatedPawfile;
+      })
+      .then(updatedPawfile=>{
+        console.log('THE updatedPawfile', updatedPawfile);
+        return Pawfile.findOneAndUpdate({_id: pawfileId, userId}, updatedPawfile, {new: true}).populate('reminders') .populate('posts');
+      })
+      .then(pawfile => {
+        if(pawfile){
+          res.status(200).json(pawfile);
+        }
+        else{
+          next();
+        }
+      })
+      .catch(err => {
+        next(err);
+      });
+  }
+  else{
+    console.log('pawfile about to update', updatedPawfile);
+    Pawfile.findOneAndUpdate({_id: pawfileId, userId}, updatedPawfile, {new: true}).populate('reminders') .populate('posts')
+      .then(pawfile => {
+        if(pawfile){
+          res.status(200).json(pawfile);
+        }
+        else{
+          next();
+        }
+      })
+      .catch(err => {
+        next(err);
+      });
+  }
 });
 
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
@@ -132,7 +191,7 @@ router.delete('/:pawfileId', (req, res, next) => {
 
   const postsRemovePromise = Post.deleteMany({userId: userId});
   const remindersRemovePromise = Reminder.deleteMany({userId: userId});
-  const pawfileDeletePromise =  Pawfile.findOneAndDelete({_id:pawfileId, userId})
+  const pawfileDeletePromise =  Pawfile.findOneAndDelete({_id:pawfileId, userId});
 
 
   return Promise.all([postsRemovePromise, remindersRemovePromise, pawfileDeletePromise])
