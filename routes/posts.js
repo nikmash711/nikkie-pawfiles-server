@@ -2,11 +2,22 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cloudinary = require('cloudinary');
+const formData = require('express-form-data');
 
 const Pawfile = require('../models/pawfile');
 const Post = require('../models/post');
 
 const router = express.Router();
+router.use(formData.parse());
+
+function isEmpty(obj) {
+  for(let key in obj) {
+    if(obj.hasOwnProperty(key))
+      return false;
+  }
+  return true;
+}
 
 /* ========== CREATE A POST ========== */
 router.post('/:pawfileId', (req, res, next) => {
@@ -33,7 +44,7 @@ router.post('/:pawfileId', (req, res, next) => {
     return next(err);
   }
 
-  let postResponse;
+  let photo, post;
   
   //Need to first check that the post being added to the pawfile a) belongs to this user and b) is a valid Pawfile id
   Pawfile.find({_id: pawfileId, userId})
@@ -43,14 +54,37 @@ router.post('/:pawfileId', (req, res, next) => {
       }
       return Post.create(newPost);
     })
-    .then(post => {
-      postResponse = post;
+    .then(newPost=> {
+      post = newPost;
+      if(!isEmpty(req.files)){
+        photo = Object.values(req.files);
+        // first upload the image to cloudinary
+        return cloudinary.uploader.upload(photo[0].path);
+      }
+      else{
+        return null;
+      }
+    })
+    .then(results => {
+      if(results){
+        photo = {
+          public_id: results.public_id,
+          url: results.secure_url,
+        };
+        return Post.findOneAndUpdate({_id: post._id}, {memory_img: photo}, {new: true} );
+      }
+      else{
+        return Post.findById(post._id);
+      }
+    })
+    .then(updatedPost => {
+      post=updatedPost;
       return Pawfile.findByIdAndUpdate(pawfileId, {$push: {posts: post.id}}, {new: true})
         .populate('reminders')
         .populate('posts');
     })
     .then(()=>{
-      return res.location(`http://${req.headers.host}/posts/${postResponse.id}`).status(201).json(postResponse);
+      return res.location(`http://${req.headers.host}/posts/${post.id}`).status(201).json(post);
     })
     .catch(err => {
       next(err);
@@ -95,7 +129,7 @@ router.put('/:pawfileId/:postId', (req, res, next) => {
       if(post.length===0){
         return Promise.reject();
       }
-      return Post.findOneAndUpdate({_id: postId, userId: userId}, updatedPost, {new: true});
+      return Post.findOneAndUpdate({_id: postId, userId: userId}, {title: updatedPost.title, date: updatedPost.date, description: updatedPost.description} , {new: true});
     })
     .then(post=>{
       postResponse=post;

@@ -9,11 +9,11 @@ const Pawfile = require('../models/pawfile');
 const Reminder = require('../models/reminder');
 const Post = require('../models/post');
 
-cloudinary.config({ 
-  cloud_name: process.env.CLOUD_NAME, 
-  api_key: process.env.API_KEY, 
-  api_secret: process.env.API_SECRET
-});
+// cloudinary.config({ 
+//   cloud_name: process.env.CLOUD_NAME, 
+//   api_key: process.env.API_KEY, 
+//   api_secret: process.env.API_SECRET
+// });
 
 const router = express.Router();
 

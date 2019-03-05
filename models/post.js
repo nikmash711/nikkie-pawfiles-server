@@ -7,7 +7,7 @@ const postSchema = new mongoose.Schema({
   title: { type: String, required: true },
   date: { type: String, required: true },
   description: { type: String}, 
-  memory_img: { type: String },
+  memory_img: { type: Object, required: true},
   symptoms: [{type: String}],
   vaccinations: [{ type: String }],
   prescriptions: [{ type: String }],
