@@ -26,8 +26,6 @@ router.post('/:pawfileId', (req, res, next) => {
   const userId = req.user.id;
   newPost.userId = userId;
 
-  console.log('post is', newPost);
-
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId) ) {
     const err = new Error('The `id` is not a valid Mongoose id!');
@@ -57,16 +55,13 @@ router.post('/:pawfileId', (req, res, next) => {
       return Post.create(newPost);
     })
     .then(newPost=> {
-      console.log('created new post')
       post = newPost;
       if(!isEmpty(req.files)){
-        console.log('1')
         photo = Object.values(req.files);
         // first upload the image to cloudinary
         return cloudinary.uploader.upload(photo[0].path);
       }
       else{
-        console.log('2')
         return null;
       }
     })
@@ -79,12 +74,10 @@ router.post('/:pawfileId', (req, res, next) => {
         return Post.findOneAndUpdate({_id: post._id}, {memory_img: photo}, {new: true} );
       }
       else{
-        console.log('3')
         return Post.findById(post._id);
       }
     })
     .then(updatedPost => {
-      console.log('4')
       post=updatedPost;
       return Pawfile.findByIdAndUpdate(pawfileId, {$push: {posts: post.id}}, {new: true})
         .populate('reminders')
@@ -104,8 +97,6 @@ router.put('/:pawfileId/:postId', (req, res, next) => {
   const updatedPost = req.body;
   const userId = req.user.id;
   let postResponse;
-
-  console.log('UPDATED POT', updatedPost);
 
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(postId)  ) {
@@ -138,11 +129,9 @@ router.put('/:pawfileId/:postId', (req, res, next) => {
       if(post.length===0){
         return Promise.reject();
       }
-      console.log('2. POST IS', post);
       return Post.findOneAndUpdate({_id: postId, userId}, updatedPost , {new: true});
     })
     .then(post=>{
-      console.log('3. THE UPDATED POST IS', post);
       postResponse=post;
       return Pawfile.findById (pawfileId)
         .populate('reminders')
