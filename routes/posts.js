@@ -105,6 +105,8 @@ router.put('/:pawfileId/:postId', (req, res, next) => {
   const userId = req.user.id;
   let postResponse;
 
+  console.log('UPDATED POT', updatedPost);
+
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(postId)  ) {
     const err = new Error('The `id` is not a valid Mongoose id!');
@@ -136,9 +138,11 @@ router.put('/:pawfileId/:postId', (req, res, next) => {
       if(post.length===0){
         return Promise.reject();
       }
-      return Post.findOneAndUpdate({_id: postId, userId: userId}, {title: updatedPost.title, date: updatedPost.date, description: updatedPost.description} , {new: true});
+      console.log('2. POST IS', post);
+      return Post.findOneAndUpdate({_id: postId, userId}, updatedPost , {new: true});
     })
     .then(post=>{
+      console.log('3. THE UPDATED POST IS', post);
       postResponse=post;
       return Pawfile.findById (pawfileId)
         .populate('reminders')
