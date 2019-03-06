@@ -1,8 +1,7 @@
 
 # [Pawfiles](https://pawfiles.herokuapp.com/)
 
-## Description
-Wouldn't it be nice to keep a timeline of your pet's life? From a list of their vets, vaccination schedule, and medical history, to remembering something hilarious they did the other day, it can be easy to forget important things about your pet. Fur-tunately Pawfiles is here to help you keep track of your pet's most memorable moments! Whether it's a medical record or a cute memory you just don't want to forget, this is the purr-fect place to document it all!
+Wouldn't it be nice to keep a timeline of your pet's life? From a list of their vets, vaccination schedule, and medical history, to remembering something hilarious they did the other day, it can be easy to forget important things about your pet. Fur-tunately Pawfiles is here to help you keep track of your pet's most memorable moments! Whether it's a medical record or a cute memory you just don't want to forget, this is paws-itively the purr-fect place to document it all!
 
 ## Features: 
 :white_check_mark: Users can create an account for themselves with their first and last name, a username, and password
@@ -11,11 +10,11 @@ Wouldn't it be nice to keep a timeline of your pet's life? From a list of their 
 
 :white_check_mark: Users will be directed to a home page where they can see all of their pets, can add a new pet pawfile by filling out a brief form, can sort their pets by age or name, and search their pets. Users can have as many pawfiles as they do pets!
 
-<img src="https://drive.google.com/uc?export=view&id=1G6W9OH4WxP-sSxTApCLP4OE8E8b-vOwA" alt="homepage" width="400px" />
+<img src="https://drive.google.com/uc?export=view&id=1G6W9OH4WxP-sSxTApCLP4OE8E8b-vOwA" alt="homepage" width="900px" />
 
 :white_check_mark: Users can add posts for each pet - it can be a memory post with a photo corresponding to the memory, or a medical post to document symptoms, vet diagnosis, medications, and vaccinations
 
-<img src="https://drive.google.com/uc?export=view&id=1vIca4Q-ds8yC1khECwNbc9AJYBmupGbg" alt="homepage" width="400px" />
+<img src="https://drive.google.com/uc?export=view&id=1vIca4Q-ds8yC1khECwNbc9AJYBmupGbg" alt="homepage" width="900px" />
 
 :white_check_mark: Posts are organized on the Pawfile chronologically by the date the user inputted, but users can search for a specific post and filter categorically
 
@@ -25,56 +24,42 @@ Wouldn't it be nice to keep a timeline of your pet's life? From a list of their 
 
 :white_check_mark: Users can update their password, first name, last name, or username after they're logged in
 
-## Tech Stack: 
-Full-stack app with:
-- React for the frontend
-- Redux for state management
-- Node/Express for the backend
-- MongoDB for the database
-- JWTs for authentication
-- Mocha/Chai for server-side testing
-- Enzyme for React component testing
+## Tech Specs: 
+**Front-end:**
+- React
+- Redux
+- Javascript
+- Socket.io 
+- HTML5
+- CSS
+- Enzyme
+
+**Back-end**
+- Node
+- Express
+- MongoDB hosted on mLab
+- JWT 
+- Passport 
+- Mocha/Chai
+
+**Workflow**
+- Agile/SCRUM 
 
 ## Future Updates
-:point_right: Users can upload photos and files directly from their device rather than needing to provide a URL to an image
-
 :point_right: Users will provide emails at login and can consequently reset passwords if they're unable to login 
 
 :point_right: Users will have a more convenient way of accessing their pet's full vaccination, prescription, and doctor history depending on the posts they've created
 
-:point_right: Users can filter their posts by date 
-
-## File Tree:
-``` bash
-├── README.md
-├── config.js
-├── db
-│   └── seed
-│       └── data.js
-├── models
-│   ├── pawfile.js
-│   ├── post.js
-│   ├── reminder.js
-│   ├── user.js
-│   └── vaccination.js
-├── package-lock.json
-├── package.json
-├── passport
-│   ├── jwt.js
-│   └── local.js
-├── routes
-│   ├── auth.js
-│   ├── pawfiles.js
-│   ├── posts.js
-│   ├── reminders.js
-│   └── users.js
-├── server.js
-├── test
-│   └── users.test.js
-└── utils
-    └── seed-database.js
-```
+:point_right: Users can upload pdfs of invoices with a medical post
 
 ## Links
-[Client Repo](https://github.com/thinkful-ei26/nikkie-pawfiles-client)
-[Deployed App On Heroku](https://pawfiles.herokuapp.com/)
+[Client Repo](https://github.com/nikmash711/pawfiles-client)
+
+[Deployed Client On Heroku](https://pawfiles.herokuapp.com/)
+
+[Deployed Server On Heroku](https://pawfiles-server.herokuapp.com/)
+
+## Demo Info:
+Username: demo123
+
+Password: demo123
