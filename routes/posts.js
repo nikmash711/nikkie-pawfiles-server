@@ -26,6 +26,8 @@ router.post('/:pawfileId', (req, res, next) => {
   const userId = req.user.id;
   newPost.userId = userId;
 
+  console.log('post is', newPost);
+
   /***** Never trust users - validate input *****/
   if (!mongoose.Types.ObjectId.isValid(pawfileId) || !mongoose.Types.ObjectId.isValid(userId) ) {
     const err = new Error('The `id` is not a valid Mongoose id!');
@@ -55,13 +57,16 @@ router.post('/:pawfileId', (req, res, next) => {
       return Post.create(newPost);
     })
     .then(newPost=> {
+      console.log('created new post')
       post = newPost;
       if(!isEmpty(req.files)){
+        console.log('1')
         photo = Object.values(req.files);
         // first upload the image to cloudinary
         return cloudinary.uploader.upload(photo[0].path);
       }
       else{
+        console.log('2')
         return null;
       }
     })
@@ -74,10 +79,12 @@ router.post('/:pawfileId', (req, res, next) => {
         return Post.findOneAndUpdate({_id: post._id}, {memory_img: photo}, {new: true} );
       }
       else{
+        console.log('3')
         return Post.findById(post._id);
       }
     })
     .then(updatedPost => {
+      console.log('4')
       post=updatedPost;
       return Pawfile.findByIdAndUpdate(pawfileId, {$push: {posts: post.id}}, {new: true})
         .populate('reminders')
@@ -166,16 +173,14 @@ router.delete('/:pawfileId/:postId', (req, res, next) => {
   const postRemovePromise = Post.findOneAndDelete({_id: postId, userId: userId});
 
   // Don't delete the pawfile associated with the post to be deleted, but just remove the post from the posts array
-  const pawfilePostPullPromise = Pawfile.findOneAndUpdate({pawfileId, userId},
-    { $pull: { posts: postId } }
-  );
+  const pawfilePostPullPromise = Pawfile.findOneAndUpdate({_id: pawfileId, userId}, { $pull: { posts: postId } }, {new: true});
 
   Pawfile.find({_id: pawfileId, userId, posts:{$in: postId}})
     .then(pawfile=>{
       if(pawfile.length===0){
         return Promise.reject();
       }
-      //check to see if user has access to this reminder: 
+      //check to see if user has access to this post: 
       return Post.find({_id: postId, userId});
     })
     .then(post=>{
@@ -185,7 +190,7 @@ router.delete('/:pawfileId/:postId', (req, res, next) => {
       // delete the reminder and update the pawfile in parallel using .all
       return Promise.all([postRemovePromise, pawfilePostPullPromise]);
     })
-    .then((post) => {
+    .then(([post, pawfile]) => {
       // We want to make sure that it doesn't try to delete a post that no longer exists or never existed. To prevent that, we need to check this: 
       if(post[0]!==null){
         res.status(204).end();

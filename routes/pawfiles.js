@@ -9,12 +9,6 @@ const Pawfile = require('../models/pawfile');
 const Reminder = require('../models/reminder');
 const Post = require('../models/post');
 
-// cloudinary.config({ 
-//   cloud_name: process.env.CLOUD_NAME, 
-//   api_key: process.env.API_KEY, 
-//   api_secret: process.env.API_SECRET
-// });
-
 const router = express.Router();
 
 router.use(formData.parse());
@@ -22,7 +16,6 @@ router.use(formData.parse());
 
 /* GET ALL PAWFILES */
 router.get('/', (req, res, next) => {
-  console.log('IN GET');
   const userId = req.user.id;
 
   /***** Never trust users - validate input *****/
