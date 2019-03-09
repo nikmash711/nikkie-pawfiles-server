@@ -45,6 +45,63 @@ From a list of their vets, vaccination schedule, and medical history, to remembe
 **Workflow**
 - Agile/SCRUM 
 
+## Schemas: 
+
+### User
+```
+{
+  firstName:  {type: String, required: true},
+  lastName: {type: String, required: true},
+  username: {type: String, required: true, unique: true},
+  password: {type: String, required: true},
+}
+```
+
+### Pawfile
+```
+{
+  name: { type: String, required: true },
+  species: { type: String, required: true },
+  gender: { type: String, required: true }, 
+  img: { type: Object, required: true},
+  breed: { type: String },
+  weight: { type: String }, 
+  birthday: { type: String },
+  bio: { type: String },
+  reminders: [{type: mongoose.Schema.Types.ObjectId, ref: 'Reminder'}],
+  posts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+}
+```
+
+### Post 
+```
+{
+  type: { type: String, required: true },
+  title: { type: String, required: true },
+  date: { type: String, required: true },
+  description: { type: String}, 
+  memory_img: { type: Object},
+  symptoms: [{type: String}],
+  vaccinations: [{ type: String }],
+  prescriptions: [{ type: String }],
+  doctor: { type: String, },
+  office: { type: String },
+  notes: { type: String },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+}
+```
+
+### Reminder
+```
+{
+  note: { type: String, required: true },
+  date: { type: String },
+  time: { type: String, },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+}
+```
+
 ## Future Updates
 :point_right: Users will provide emails at login and can consequently reset passwords if they're unable to login 
 
