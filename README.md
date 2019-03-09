@@ -131,6 +131,7 @@ From a list of their vets, vaccination schedule, and medical history, to remembe
 │   └── POST /:pawfileId
 │   └── PUT /:pawfileId/:reminderId
 │   └── DELETE /:pawfileId/:reminderId
+``` 
 
 ## Future Updates
 :point_right: Users will provide emails at login and can consequently reset passwords if they're unable to login 
