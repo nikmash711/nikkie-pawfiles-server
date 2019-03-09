@@ -102,6 +102,36 @@ From a list of their vets, vaccination schedule, and medical history, to remembe
 }
 ```
 
+## API Overview
+```        
+/api
+.
+├── /auth
+│   └── POST
+│       ├── /login
+│       ├── /refresh
+│       └── /refresh-profile
+├── /users
+│   └── POST /
+│   └── PUT
+│       ├── /account
+│       ├── /password
+├── /pawfiles
+│   └── GET
+│       ├── /
+│       ├── /:pawfileId
+│   └── POST /
+│   └── PUT /:pawfileId
+│   └── DELETE /:pawfileId
+├── /posts
+│   └── POST /:pawfileId
+│   └── PUT /:pawfileId/:postId
+│   └── DELETE /:pawfileId/:postId
+├── /reminders
+│   └── POST /:pawfileId
+│   └── PUT /:pawfileId/:reminderId
+│   └── DELETE /:pawfileId/:reminderId
+
 ## Future Updates
 :point_right: Users will provide emails at login and can consequently reset passwords if they're unable to login 
 
